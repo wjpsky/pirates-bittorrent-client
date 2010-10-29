@@ -1,5 +1,6 @@
 -module(simpleParser).
 -export([start/1]).
+-include_lib("kernel/include/file.hrl").
 
 start(File)->
     case (file:open(File,[read])) of
