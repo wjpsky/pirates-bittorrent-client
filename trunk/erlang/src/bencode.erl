@@ -8,8 +8,7 @@
 -module(bencode).
 -export([encode/1,decode/2]).
 
-
-
+%% this function take a varible and convert it to bencode  
 
 encode({list, List})->
 	en_list(List, [$l]);
@@ -40,6 +39,8 @@ en_dic([{Key,Value}|T],AcDic)->
 en_dic([], AcList) ->
 	AcList++[$e].
 
+%% this function decode the bencode and convert it to respective 
+%% term (dictionary, list, string and integer) 
 
 decode([], Ac) ->
 	{[], Ac};
