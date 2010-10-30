@@ -1,7 +1,7 @@
 %autor:Nena Stojova
 
 -module(simpleParser).
--export([start/1]).
+-export([start/1,decode/1]).
 -include_lib("kernel/include/file.hrl").
 
 %%Function that opens a file, and passes the data of the file to the decode function
@@ -21,7 +21,7 @@ start(File)->
 
 %Passes the data of the file to the rowdecode function that does the acctual decoding
 decode(Data)->
-    {_Rest,[Result|[]]}=rawdecode(Data,[]),
+    {_Rest,[Result|[]]}=rawdecode(Data,[]),								
     lists:reverse(Result).
 
 %%Used to store the information of a dictionary in a tuple. Since every dictionary has a name of a value and the information that that value holds we store this in a 
