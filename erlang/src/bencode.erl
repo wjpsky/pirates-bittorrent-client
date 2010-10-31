@@ -6,15 +6,17 @@
 %%% Created : 15 Oct 2010 by mehdi <mehdi61b@gmail.com>
 %%%-------------------------------------------------------------------
 -module(bencode).
--export([encode/1,decode/2]).
+-export([encode/1,decode/1]).
 
-%% this function take a varible and convert it to bencode  
+%% this function take a binary and contert it to a list then encode 
+encode(BinaryTerm)->
+	encod(binary_to_term(BinaryTerm)).
 
-encode({list, List})->
+encod({list, List})->
 	en_list(List, [$l]);
-encode({dic, Dic}) ->
+encod({dic, Dic}) ->
 	en_dic(Dic,[$d]);
-encode(Data)->
+encod(Data)->
 	case is_integer(Data) of
 		true->  en_integer(Data);
 		false -> case is_list(Data) of
@@ -30,49 +32,61 @@ en_string(String)->
 	integer_to_list(length(String))++[$:]++String.
 
 en_list([H|T], AcList)->
-	en_list(T, lists:reverse(encode(H))++AcList);
+	en_list(T, lists:reverse(encod(H))++AcList);
 en_list([], AcList) ->
 	lists:reverse(AcList)++[$e].
 
 en_dic([{Key,Value}|T],AcDic)->
-	en_dic(T, AcDic++encode(Key)++encode(Value));
+	en_dic(T, AcDic++encod(Key)++encod(Value));
 en_dic([], AcList) ->
 	AcList++[$e].
 
 %% this function decode the bencode and convert it to respective 
 %% term (dictionary, list, string and integer) 
 
+
+decode(Data)->
+	term_to_binary([decode(Data, [])]).%% return the result as binary
+
 decode([], Ac) ->
-	{[], Ac};
-decode([$e|T],Ac)->
-	[$e|T];
+	 Ac;
 decode([$i|T], Ac)->
-	{Rest, Int} = de_int(T, []),
-	{Rest, Ac++[Int]};     
+	   de_int(T, []);     	
 decode([$l|T], Ac) ->
-	{Rest, List} = de_list(T, []),
-	decode(Rest,Ac++[{list,List}]);
+     de_list(T, []);
 decode([$d|T], Ac) ->
-	{Rest, Dic} = de_list(T, []),
-	decode(Rest, Ac++[{dic,Dic}]);
+ 	  de_dic(T, []);
 decode(Data, Ac) ->
-	{Str, Rest} = de_str(Data, []),
-	{Rest, Str}.
-%    decode(Rest, Ac++[Str]).
+    de_str(Data, []).
 
-de_str([$:|Rest], Ac)->
-	%    io:format("##~p##",[Rest]),
-	lists:split(list_to_integer(Ac), Rest);
-de_str([Elem|Rest], Ac) ->
-	de_str(Rest, Ac++[Elem]).
-
-de_list([$e|Rest], Ac)->
-	{Rest, Ac};
-de_list(List, Ac) ->
-	{Rest, Result} = decode(List, []),
-	de_list(Rest, Ac++Result).
 
 de_int([$e|Rest], AcInt)->
-	{Rest,list_to_integer(AcInt)};
+	{list_to_integer(AcInt), Rest};  %% return a tuple contain an integer and the rest of the list  
 de_int([Elem|Rest], AcInt)->
 	de_int(Rest, AcInt++[Elem]).
+	
+de_str([$:|Rest], AcStr)->
+	lists:split(list_to_integer(AcStr), Rest);  %% reutrn a tuple contains a string and the rest of the list 
+de_str([Elem|Rest], AcStr) ->
+	de_str(Rest, AcStr++[Elem]).
+
+de_list([$e|Rest], AcList)->
+	{{list, AcList}, Rest};
+de_list([Elem|Rest], AcList) ->
+	{NewElems, NewRest} = decode([Elem|Rest], []),
+    de_list(NewRest, AcList++[NewElems]).
+
+de_dic([$e|Rest], AcList)->
+	{{dic, AcList}, Rest};
+de_dic([Elem|Rest], AcList) ->
+	{NewElems, NewRest} = decode([Elem|Rest], []),
+    de_dic(NewRest, AcList++[NewElems]).
+
+
+    
+
+	  
+	  
+
+
+
