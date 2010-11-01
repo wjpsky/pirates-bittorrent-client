@@ -10,11 +10,12 @@
 
 %% this function take a binary and contert it to a list then encode 
 encode(BinaryTerm)->
-	encod(binary_to_term(BinaryTerm)).
-
-encod({list, List})->
+%% 	encod(binary_to_term(BinaryTerm)).
+    encod(BinaryTerm).
+	
+encod({list,List})->
 	en_list(List, [$l]);
-encod({dic, Dic}) ->
+encod({dic,Dic}) ->
 	en_dic(Dic,[$d]);
 encod(Data)->
 	case is_integer(Data) of
@@ -36,8 +37,10 @@ en_list([H|T], AcList)->
 en_list([], AcList) ->
 	lists:reverse(AcList)++[$e].
 
-en_dic([{Key,Value}|T],AcDic)->
+en_dic([[Key|Value]|T],AcDic)->
 	en_dic(T, AcDic++encod(Key)++encod(Value));
+%% en_dic([[[Key|Value1]|Value2]|[]], AcDic)->
+%% 	en_dic([], AcDic++encod(Key)++encod(Value1)++encod(Value2));
 en_dic([], AcList) ->
 	AcList++[$e].
 
@@ -46,7 +49,8 @@ en_dic([], AcList) ->
 
 
 decode(Data)->
-	term_to_binary([decode(Data, [])]).%% return the result as binary
+%% 	term_to_binary([decode(Data, [])]).%% return the result as binary
+  decode(Data,[]).
 
 decode([], Ac) ->
 	 Ac;
