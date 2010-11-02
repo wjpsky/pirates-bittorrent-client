@@ -1,23 +1,7 @@
 %autor:Nena Stojova
 
 -module(simpleParser).
--export([start/1,decode/1]).
--include_lib("kernel/include/file.hrl").
-
-%%Function that opens a file, and passes the data of the file to the decode function
-start(File)->
-    case (file:open(File,[read])) of
-	{ok,IoDevice}->
-	    {ok,FileInfo} = file:read_file_info(File),
-	    case (file:read(IoDevice,FileInfo#file_info.size)) of
-		{ok,Data} ->
-		    decode(Data);
-		A ->
-		    A
-	    end;
-	{error,Reason}->
-	    {File,error,Reason}
-    end.
+-export([decode/1]).
 
 %Passes the data of the file to the rowdecode function that does the acctual decoding
 decode(Data)->
