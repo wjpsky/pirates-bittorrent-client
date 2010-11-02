@@ -33,7 +33,7 @@ handle_call(recv, _From, State) ->
 	{reply, Message, State}.
 
 handle_cast(connect, _) ->
-    case gen_tcp:listen(6888, [list]) of
+    case gen_tcp:listen(6888, [binary]) of
 	{ok, LSocket}->
 	    io:format("~w~n", [LSocket]),
 	    case gen_tcp:accept(LSocket) of 
@@ -42,10 +42,11 @@ handle_cast(connect, _) ->
 		    io:format("accepted\n"),
 		    {noreply, Socket};
 		Other ->
-		    io:format("~w~n",[Other])
+		    error_logger:error_report(["An error occurred which is",Other,"in line",?LINE,"of module",?MODULE])
+
 	    end;
 	{error, Reason} ->
-	    Reason
+	    error_logger:error_report("An error occurred", Reason, [?LINE,?MODULE])
     end;
 
 handle_cast(stop, State) -> {stop, normal, State}.
@@ -66,7 +67,7 @@ start() ->
 		{ok, Pid} ->
 			Pid;
 		Reason ->
-			Reason
+			error_logger:error_report("An error occurred", Reason, [?LINE,?MODULE])
 	end.
 
 stop() ->
