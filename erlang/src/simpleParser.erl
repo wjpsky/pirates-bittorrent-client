@@ -20,6 +20,13 @@ to_tuple([H1,H2|T])->
 rawdecode([],Res)->
     {[],Res};
 %%When the first letter is $d we know we have encountered a dictionary so we convert it to a tuple add it to the result and continue rowdecoding with the rest of the information
+rawdecode([$d|T],["info"|Res])->
+    {Rest,Dic}=rawdecode(T,[]),
+    InfoSize=length(T)-length(Rest),
+    RawInfo=lists:sublist(T,InfoSize),
+    Result=[to_tuple(Dic)|["info"|Res]],
+    rawdecode(Rest,[RawInfo|["rawInfo"|Result]]);
+
 rawdecode([$d|T],Res)->
     {Rest,Dic}=rawdecode(T,[]),
     rawdecode(Rest,[to_tuple(Dic)|Res]);
