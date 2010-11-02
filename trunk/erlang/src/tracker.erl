@@ -25,7 +25,7 @@ start(Request)->
 	inets:start(), 
 	case http:request(Request) of
 		{ok, {_,_,Respond}}-> simpleParser:decode(Respond);  
-		Error ->  Error
+		Error ->  error_logger:error_report("An error occurred", Error, [?LINE,?MODULE])
 	end.
 
 

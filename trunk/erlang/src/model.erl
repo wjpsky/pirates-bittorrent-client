@@ -45,7 +45,8 @@ start() ->
 		{ok, Pid} ->
 			Pid;
 		{error, Reason} ->
-			{error, Reason}
+			{error, Reason},
+			error_logger:error_report("An error occurred", Reason, [?LINE,?MODULE])
 	end.
 
 stop() ->

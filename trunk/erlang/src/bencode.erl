@@ -22,7 +22,8 @@ encod(Data)->
 		true->  en_integer(Data);
 		false -> case is_list(Data) of
 					 true-> en_string(Data);
-					 false -> {error, undefined_DataType}
+					 false -> {error, undefined_DataType},
+							  error_logger:error_report("An error occurred", [?LINE,?MODULE])
 				 end
 	end.		      
 
