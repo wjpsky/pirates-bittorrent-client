@@ -63,6 +63,6 @@ hash_info(List)->
     crypto:stop(),
     Hash.
 
-test(Rec)->
-    (Rec#torrent.info)#torrent_info.name,
-    Rec#torrent.info_hash.
+%%test(Rec)->
+  %%  (Rec#torrent.info)#torrent_info.name,
+   %% Rec#torrent.info_hash.
