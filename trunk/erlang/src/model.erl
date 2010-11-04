@@ -17,13 +17,13 @@
 -behaviour(gen_server).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, get_state/0]).
-
-
+-export([start_link/0]).
+-record(state,{}).
 %% =============================================================================
 %% EXPORTED GEN_SERVER CALLBACKS
 %% =============================================================================
 
-init([]) -> {ok, []}.
+init([]) -> {ok, #state{}}.
 
 handle_call(get_state, _From, State) -> {reply, {}, State}.
 
@@ -64,7 +64,7 @@ stop() ->
 
 get_state() -> gen_server:call(?MODULE, get_state).
 
-
+start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 %% =============================================================================
 %% LOCAL FUNCTIONS
 %% =============================================================================
