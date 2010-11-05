@@ -6,9 +6,12 @@
 -export([init/1,handle_event/2,terminate/2,code_change/3,handle_call/2,handle_info/2]).
 -behaviour(gen_event).
 
+%Creates a file 
 init(File)->
     {ok,Fd}=file:open(File,write),
     {ok,Fd}.
+
+% Saves the event and the time to the file
 
 handle_event(Event,Fd)->
     io:format(Fd,"~w~n",[{erlang:localtime(),Event}]),
