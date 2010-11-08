@@ -15,15 +15,13 @@
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, connect/0, send/1, recv/0]).
 
-
 -export([start_link/0]).
 
--record(state, {}).
 %% =============================================================================
 %% EXPORTED GEN_SERVER CALLBACKS
 %% =============================================================================
 
-init([]) -> {ok, #state{}}.
+init([]) -> {ok, {}}.
 
 handle_call({send, Packet}, _From, State) ->
 	gen_tcp:send(State, Packet),
