@@ -18,12 +18,11 @@
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, get_state/0]).
 -export([start_link/0]).
--record(state,{}).
 %% =============================================================================
 %% EXPORTED GEN_SERVER CALLBACKS
 %% =============================================================================
 
-init([]) -> {ok, #state{}}.
+init([]) -> {ok, {}}.
 
 handle_call(get_state, _From, State) -> {reply, {}, State}.
 
