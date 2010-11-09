@@ -1,7 +1,7 @@
 %%% -------------------------------------------------------------------
 %%% Author  : mahdi abdinejadi
-%%% Description :
-%%%
+%%% Description : this is a sample of gen_fsm to 
+%%%               implement in the peer gen_fsm
 %%% Created : Nov 3, 2010
 %%% -------------------------------------------------------------------
 -module(dummy_fsm).
