@@ -2,7 +2,9 @@
 %% Created: Nov 2, 2010
 %% Description: TODO: Add description to fileRecords
 -module(fileRecords).
--export([toRec/1,test/1]).
+-export([toRec/1
+%% 		 ,test/1
+		]).
 -include("torrent_records.hrl"). 
 
 toRec(Data)->
