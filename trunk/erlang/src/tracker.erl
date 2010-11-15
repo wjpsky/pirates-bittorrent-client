@@ -23,10 +23,12 @@ start()->
 %% get respond and parse it. 
 start(Request)->
 	inets:start(), 
-	case http:request(Request) of
-		{ok, {_,_,Respond}}-> simpleParser:decode(Respond);  
-		Error ->  error_logger:error_report("An error occurred", Error, [?LINE,?MODULE])
+	case httpc:request(Request) of
+		{ok, {_,_,Respond}}-> simpleParser:decode(Respond),io:format("test respond") ; 
+		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]), io:format("test error")
 	end.
+
+
 
 
 
