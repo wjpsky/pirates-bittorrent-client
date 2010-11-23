@@ -4,6 +4,8 @@
 -module(peer_id).
 
 -define(ID_LENGTH, 20).
+-define(CHAR_LIST, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"). %36 chars
+
 
 
 %%----------------------------------------------------------------------
@@ -15,7 +17,7 @@
 %% API Functions
 %%----------------------------------------------------------------------
 get_id()->
-	get_id(20 , []).
+	get_id(?ID_LENGTH , []).
  
 %%----------------------------------------------------------------------
 %% Local Functions
@@ -23,9 +25,5 @@ get_id()->
 get_id(0, Acc)->
 	Acc;
 get_id(Num, Acc)->
-	Elem = lists:nth(round(random:uniform()*35)+1, get_char()),
-%% 	io:format("~p \n",[Elem]),
+	Elem = lists:nth(round(random:uniform()*35)+1, ?CHAR_LIST),
 	get_id(Num-1, [Elem | Acc]).
-
-get_char()->
-	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".%length is 36 char
