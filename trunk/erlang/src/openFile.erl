@@ -1,4 +1,4 @@
-%% Author: nenastojova
+%% Author: nenastojova, jonkri
 %% Created: Nov 2, 2010
 %% Description: TODO: Add description to openFile
 -module(openFile).
@@ -12,11 +12,11 @@ start(File)->
 	    {ok,FileInfo} = file:read_file_info(File),
 	    case (file:read(IoDevice,FileInfo#file_info.size)) of
 		{ok,Data} ->
-		    Data; %%returns the contence of the file
+		    ParsedData = simpleParser:decode(Data),
+			gen_server:cast(controller, {torrent_file_parsed, ParsedData});					
 		A ->
 		    A
 	    end;
 	{error,Reason}->
 	    {File,error,Reason}
     end.
-
