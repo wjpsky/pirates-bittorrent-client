@@ -21,11 +21,10 @@ start()->
 start(Request)->
 	inets:start(), 
 	case httpc:request(Request) of
-		{ok, {_,_,Respond}}-> simpleParser:decode(Respond);%io:format("test respond") ; 
+		{ok, {_,_,Respond}}-> Test = simpleParser:decode(Respond),%io:format("test respond") ;
+								[{peers,List_peers},{interval,Interval},{incomplete,Incomplete},{complete,Complete}] = Test,
+							  List_peers;
 		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]) %,io:format("test error")
 	end.
-
-
-
 
 
