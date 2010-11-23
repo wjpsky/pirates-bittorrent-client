@@ -24,8 +24,8 @@ start()->
 start(Request)->
 	inets:start(), 
 	case httpc:request(Request) of
-		{ok, {_,_,Respond}}-> simpleParser:decode(Respond),io:format("test respond") ; 
-		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]), io:format("test error")
+		{ok, {_,_,Respond}}-> simpleParser:decode(Respond);%io:format("test respond") ; 
+		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]) %,io:format("test error")
 	end.
 
 
