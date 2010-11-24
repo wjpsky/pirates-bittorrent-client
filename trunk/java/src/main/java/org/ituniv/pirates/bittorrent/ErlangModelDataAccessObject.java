@@ -18,11 +18,10 @@ import com.ericsson.otp.erlang.OtpSelf;
  * bases. It will connect to an Erlang node and start polling for updates. Use
  * the get methods to get information about the status of the application.
  * 
- * @author Jon Kristensen
- */
+ * @author Jon Kristensen */
 public class ErlangModelDataAccessObject
 {
-	private final List<Torrent> torrents = new ArrayList<Torrent>();
+	private static List<Torrent> torrents = new ArrayList<Torrent>();
 
 	private volatile boolean isRunning = true;
 
@@ -163,7 +162,7 @@ public class ErlangModelDataAccessObject
 
 	public static void main(String[] args)
 	{
-		// TODO: Wang: Try to run this and move this code to your view class.
+		// TODO: : Try to run this and move this code to your view class.
 
 		ErlangModelDataAccessObject model = new ErlangModelDataAccessObject();
 		List<Torrent> torrents = model.getTorrents();
@@ -173,9 +172,9 @@ public class ErlangModelDataAccessObject
 			System.out.println("TORRENT DETAILS:");
 			for(Torrent torrent : torrents)
 			{
-				System.out.println("\t" + torrent);
+				System.out.println("\t" + torrent+" active:"+torrent.getName());
 			}
-			System.out.println();
+			
 
 			try
 			{
@@ -188,7 +187,7 @@ public class ErlangModelDataAccessObject
 		}
 	}
 
-	public List<Torrent> getTorrents()
+	public static List<Torrent> getTorrents()
 	{
 		return torrents;
 	}
