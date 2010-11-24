@@ -60,10 +60,10 @@ convertPath([H|T]) ->
     H++"/"++convertPath(T).
 
 hash_info(List)->
-    crypto:start(),
-    Hash=crypto:sha(List),
-    crypto:stop(),
-    Hash.
+%%      crypto:start(),
+     Hash=crypto:sha(List),
+%%      crypto:stop(),
+     Hash.
 test(Rec)->
-   (Rec#torrent.info)#torrent_info.name,
-   Rec#torrent.info_hash.
+   io:format("~w~n",[[{info_name,(Rec#torrent.info)#torrent_info.name},{info_hash,Rec#torrent.info_hash}]]).
+%% Rec#torrent.info_hash
