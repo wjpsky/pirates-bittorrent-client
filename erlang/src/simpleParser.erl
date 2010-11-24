@@ -1,9 +1,10 @@
 %autor:Nena Stojova
 
 -module(simpleParser).
--export([decode/1]).
+-export([decode/1,fetchString/3]).
 
 %Passes the data of the file to the rowdecode function that does the acctual decoding
+
 decode(Data)->
     {_Rest,[Result|[]]}=rawdecode(Data,[]),								
     lists:reverse(Result).

@@ -3,7 +3,7 @@
 %% Description: TODO: Add description to fileRecords
 -module(fileRecords).
 -export([toRec/1
-%% 		 ,test/1
+		 ,test/1
 		]).
 -include("torrent_records.hrl"). 
 
@@ -64,7 +64,6 @@ hash_info(List)->
     Hash=crypto:sha(List),
     crypto:stop(),
     Hash.
-
-%%test(Rec)->
-  %%  (Rec#torrent.info)#torrent_info.name,
-   %% Rec#torrent.info_hash.
+test(Rec)->
+   (Rec#torrent.info)#torrent_info.name,
+   Rec#torrent.info_hash.

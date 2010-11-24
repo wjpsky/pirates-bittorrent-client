@@ -12,7 +12,8 @@ start(File)->
 	    {ok,FileInfo} = file:read_file_info(File),
 	    case (file:read(IoDevice,FileInfo#file_info.size)) of
 		{ok,Data} ->
-		    ParsedData = simpleParser:decode(Data),
+		    ParsedData = 
+			simpleParser:decode(Data),
 			gen_server:cast(controller, {torrent_file_parsed, ParsedData});					
 		A ->
 		    A
