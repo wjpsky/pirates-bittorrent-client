@@ -1,7 +1,7 @@
 %% Author: nenastojova
 %% Created: Nov 2, 2010
 %% Description: TODO: Add description to fileRecords
--module(fileRecords).
+-module(file_records).
 -export([toRec/1
 		 ,test/1
 		]).
@@ -35,11 +35,11 @@ toInfoRec([{pieces,Val}|T],Info) ->
 toInfoRec([_H|T],Info)->
 	toInfoRec(T,Info).
 
-fetchPieces([],_Key)->
+fetchPieces([], _Key) ->
     [];
-fetchPieces(List,Key) ->
-    {Hash,Rest}=simpleParser:fetchString(List,20,[]),
-    [{Key,Hash}|fetchPieces(Rest,Key+1)].
+fetchPieces(List, Key) ->
+    {Hash, Rest} = torrent_file_parser:fetchString(List, 20, []),
+    [{Key, Hash}| fetchPieces(Rest, Key + 1)].
 
 fetchFiles([],Result)->
     Result;
@@ -54,12 +54,12 @@ decodeFile([{length,Len}|T],Tor) ->
 decodeFile([{path,Path}|T],Tor) ->
     decodeFile(T,Tor#torrent_file{path=convertPath(Path)}).
 
-convertPath([])->
+convertPath([]) ->
     [];
-convertPath([H|[]])->
+convertPath([H]) ->
     H;
-convertPath([H|T]) ->
-    H++"/"++convertPath(T).
+convertPath([H| T]) ->
+    H ++ "/" ++ convertPath(T).
 
 hash_info(List)->
 %%      crypto:start(),
