@@ -31,7 +31,9 @@ toInfoRec([{name,Val}|T],Info) ->
 toInfoRec([{'piece length',Val}|T],Info) ->
      toInfoRec(T,Info#torrent_info{piece_length=Val});
 toInfoRec([{pieces,Val}|T],Info) ->
-    toInfoRec(T,Info#torrent_info{pieces=fetchPieces(Val,1)}).
+    toInfoRec(T,Info#torrent_info{pieces=fetchPieces(Val,1)});
+toInfoRec([_H|T],Info)->
+	toInfoRec(T,Info).
 
 fetchPieces([],_Key)->
     [];
