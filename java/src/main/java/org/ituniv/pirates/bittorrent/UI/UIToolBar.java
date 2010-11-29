@@ -73,7 +73,7 @@ public class UIToolBar {
 		removeItem.setToolTipText(REMOVE_NAEM);
 		try {
 			removeItem.setImage(new Image(sashForm.getShell().getDisplay(),
-					ImageLoader.addImage("image/delete.png")));
+					ImageLoader.addImage("image/remove.png")));
 		} catch (NullImageException e) {
 			e.printStackTrace();
 		}
