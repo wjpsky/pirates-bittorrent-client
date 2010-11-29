@@ -48,7 +48,7 @@ public class UITray {
 			trayItem.setToolTipText(getTrayMessage());
 			try {
 				trayItem
-						.setImage(new Image(shell.getDisplay(), ImageLoader.addImage("image/ourbt_1.jpg")));
+						.setImage(new Image(shell.getDisplay(), ImageLoader.addImage("image/oursbt1.jpg")));
 			} catch (NullImageException e1) {
 				e1.printStackTrace();
 			}

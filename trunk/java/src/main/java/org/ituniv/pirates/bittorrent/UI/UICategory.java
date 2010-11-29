@@ -64,7 +64,7 @@ public class UICategory {
 		activeItem.setText("Activity");
 		try {
 			activeItem.setImage(new Image(sashForm.getDisplay(), ImageLoader
-					.addImage("image/start.png")));
+					.addImage("image/activity.png")));
 		} catch (NullImageException e) {
 			e.printStackTrace();
 		}
