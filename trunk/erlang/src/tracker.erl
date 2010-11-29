@@ -35,9 +35,8 @@ start()->
 start(Request)->
 	inets:start(), 
 	case httpc:request(Request) of
-		{ok, {_,_,Respond}}-> Test = simpleParser:decode(Respond),%io:format("test respond") ;
+		{ok, {_,_,Respond}}-> Test = torrent_file_parser:decode(Respond),%io:format("test respond") ;
 								[{peers,List_peers},{interval,_Interval},{incomplete,_Incomplete},{complete,_Complete}] = Test,
-%% 							  List_peers;
 							  to_record(List_peers, []);
 		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]) %,io:format("test error")
 	end.
@@ -50,4 +49,4 @@ to_record([], Acc)->
 to_record([[{ip,Ip},{_peer_id,Peer_id},{port, Port}]| Rest], Acc)->
 	Peer = #peer{ ip= Ip, peer_id = Peer_id, port= Port },
 	to_record(Rest, [Peer|Acc]).
-
+ 
