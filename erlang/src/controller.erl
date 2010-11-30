@@ -22,7 +22,7 @@
 %% EXPORTED GEN_SERVER CALLBACKS
 %% =============================================================================
 
-init([]) -> {ok, {}}.
+init([]) -> {ok, peer_id:get_id()}.
 
 handle_call({parse_torrent_file, File}, _From, State) ->
     spawn(open_file, start, [File]),
@@ -31,7 +31,7 @@ handle_call({parse_torrent_file, File}, _From, State) ->
 handle_cast({torrent_file_parsed, ParsedData}, State) ->
     io:format("Torrent file parsed.\n"),
     Record = file_records:toRec(ParsedData),
-    % spawn(tracker, start, [Record]),	
+    spawn(tracker, start, [Record, State]),	
     {noreply, State};
 
 handle_cast(stop, State) -> {stop, normal, State}.

@@ -8,3 +8,13 @@
 
 %% announce is a string / info is a torrent_info record
 -record(torrent,{announce,info,info_hash}).
+
+
+%% @author mahdi abdinejadi <mehdi61b@gmail.com> @end
+%% @doc peer information.
+-record(peer,{
+			  peer_id  :: string(),
+			  ip       :: string(),
+			  port     :: integer()
+			  }).
+
