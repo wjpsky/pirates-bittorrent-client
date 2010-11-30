@@ -31,9 +31,7 @@ handle_call({parse_torrent_file, File}, _From, State) ->
 handle_cast({torrent_file_parsed, ParsedData}, State) ->
     io:format("Torrent file parsed.\n"),
     Record = file_records:toRec(ParsedData),
-    file_records:test(Record),
-    %% io:format("~p.\n", [Record]),
-    %% spawn(tracker, start, [ParsedData]),
+    % spawn(tracker, start, [Record]),	
     {noreply, State};
 
 handle_cast(stop, State) -> {stop, normal, State}.
