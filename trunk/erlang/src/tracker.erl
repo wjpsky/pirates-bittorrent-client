@@ -8,32 +8,30 @@
  
 -module(tracker).
 
-%% peer info
--record(peer,{
-			  peer_id  :: string(),
-			  ip       :: string(),
-			  port     :: integer()
-			  }).
+-include("torrent_records.hrl").
 
 
 %%
 %% Exported Functions
 %%
--export([start/0,start/1]).
+-export([start/0,start/2,convert_byte_to_hex/2, get_hash_info/1]).
 
 %% this function set an predefined request-which is used for 
 %% the test purpose- then call start(predefined request). 
 start()->
-	PreDefinedRequest= "http://torrent.fedoraproject.org:6969/announce?info_hash=%9F%A5%3C%C0%4B%16%38%F4%1C%7E%68%43%70%44%6B%34%9D%5F%62%37&peer_id=ABCDEFGHIJKLMNOPQRST&ip=193.11.196.59&port=6881&downloaded=10&left=1588&event=started",
-	start(PreDefinedRequest).
+	PreDefinedRequest= "http://torrent.fedoraproject.org:6969/announce?info_hash=%9F%A5%3C%C0%4B%16%38%F4%1C%7E%68%43%70%44%6B%34%9D%5F%62%37&peer_id=ABCDEFGHIJKLMNOPQRST&port=6881&downloaded=10&left=1588&event=started".
+	                 % http://torrent.fedoraproject.org:6969/announce?info_hash=%257d%25ef%257d%2504%2577%25b9%25cb%25d1%2543%25e3%25ba%25ca%25e7%252e%253f%2525%255f%253c%257e%2546&peer_id=ABCDEFGHIJKLMNOPQRST&port=6881&downloaded=10&left=1588&event=started
+	
+%% 	start(PreDefinedRequest).
 
 %% @doc this function call the inets:start() to have service for using
 %% the http module function, then it send a request the url and get
 %% get respond and parse it. @end
--spec(start/1 :: (string()) -> term()).
+%% -spec(start/1 :: (string()) -> term()).
 
-start(Request)->
-	inets:start(), 
+start(Record, Peer_id)->
+	inets:start(),
+	Request = generate_get_request(Record, Peer_id),
 	case httpc:request(Request) of
 		{ok, {_,_,Respond}}-> Test = torrent_file_parser:decode(Respond),%io:format("test respond") ;
 								[{peers,List_peers},{interval,_Interval},{incomplete,_Incomplete},{complete,_Complete}] = Test,
@@ -50,3 +48,66 @@ to_record([[{ip,Ip},{_peer_id,Peer_id},{port, Port}]| Rest], Acc)->
 	Peer = #peer{ ip= Ip, peer_id = Peer_id, port= Port },
 	to_record(Rest, [Peer|Acc]).
  
+generate_get_request(Record, Peer_id)->
+ 	Request = Record#torrent.announce ++ "?info_hash=", %++ edoc_lib:escape_uri(Record#torrent.info_hash),
+	
+	%error_logger:info_msg("record", [convert_byte_to_hex(binary_to_list(Record#torrent.info_hash), [])) , Request]), 
+	ok.
+
+
+
+convert_byte_to_hex([H | T] , Acc)-> 
+	convert_byte_to_hex( T, Acc ++ "%" ++ io_lib:format("~2.16.0b", [H]));
+convert_byte_to_hex([] , Acc) ->
+	lists:flatten(Acc).
+
+get_hash_info(Data)->
+	[_,  {_, Info}, _ , _]  =  Data,
+	io:format("Infoooooo ~p endddddd", [Info]).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
