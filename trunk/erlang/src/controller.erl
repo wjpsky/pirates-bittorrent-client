@@ -15,7 +15,7 @@
 
 -behaviour(gen_server).
 
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1, parse_torrent_done/1]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1]).
 
 
 %% =============================================================================
@@ -72,9 +72,6 @@ stop() ->
 
 parse_torrent_file(File) ->
 	gen_server:call(?MODULE, {parse_torrent_file, File}).
-
-parse_torrent_done(ParsedData) ->
-	gen_server:cast(?MODULE, {torrent_file_parsed, ParsedData}).
 
 %% =============================================================================
 %% LOCAL FUNCTIONS
