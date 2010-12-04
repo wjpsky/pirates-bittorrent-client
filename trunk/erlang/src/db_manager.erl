@@ -7,7 +7,7 @@
 -module(db_manager).
 -export([startDb/0,startFile/1,stop/0,put/2,get/1]).
 
-%creates an ocal manager and names it db it also adds the db_handler handler
+%creates an local manager and names it db it also adds the db_handler handler
 startDb()->
     gen_event:start({local,db}),
 	%db=manager name, db_handler = module name, []= argumets value passed to init in the db_handler
