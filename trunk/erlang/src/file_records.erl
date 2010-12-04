@@ -3,7 +3,7 @@
 %% Description: TODO: Add description to fileRecords
 -module(file_records).
 -export([toRec/1
-		 ,test/1
+		 ,test/1,toRec/2
 		]).
 -include("torrent_records.hrl"). 
 
