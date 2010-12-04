@@ -26,7 +26,7 @@ rawdecode([$d| T], ["info"| Res]) ->
     InfoSize = length(T) - length(Rest),
     RawInfo = lists:sublist(T, InfoSize),
     Result = [to_tuple(Dic), "info"| Res],
-    rawdecode(Rest, [RawInfo, "rawInfo"| Result]);
+    rawdecode(Rest, [[$d|RawInfo], "rawInfo"| Result]);
 
 rawdecode([$d| T], Res) ->
     {Rest, Dic} = rawdecode(T, []),
