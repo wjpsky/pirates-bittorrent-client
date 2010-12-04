@@ -32,10 +32,13 @@ start()->
 start(Record, Peer_id)->
 	inets:start(),
 	Request = generate_get_request(Record, Peer_id),
+	io:format("~p~n", [Request]),
 	case httpc:request(Request) of
-		{ok, {_,_,Respond}}-> Test = torrent_file_parser:decode(Respond),%io:format("test respond") ;
-								[{peers,List_peers},{interval,_Interval},{incomplete,_Incomplete},{complete,_Complete}] = Test,
-							  to_record(List_peers, []);
+		{ok, {_,_,Respond}} ->
+			Test = torrent_file_parser:decode(Respond),
+			[{peers,List_peers},{interval,_Interval},{incomplete,_Incomplete},{complete,_Complete}] = Test,
+			Hello = to_record(List_peers, []),
+			io:format("~p\n", [Hello]);
 		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]) %,io:format("test error")
 	end.
 
@@ -44,17 +47,18 @@ start(Record, Peer_id)->
 
 to_record([], Acc)->
 	Acc;
-to_record([[{ip,Ip},{_peer_id,Peer_id},{port, Port}]| Rest], Acc)->
+to_record([[{ip,Ip},{'peer id',Peer_id},{port, Port}]| Rest], Acc)->
 	Peer = #peer{ ip= Ip, peer_id = Peer_id, port= Port },
 	to_record(Rest, [Peer|Acc]).
  
 generate_get_request(Record, Peer_id)->
- 	Request = Record#torrent.announce ++ "?info_hash=", %++ edoc_lib:escape_uri(Record#torrent.info_hash),
-	
-	%error_logger:info_msg("record", [convert_byte_to_hex(binary_to_list(Record#torrent.info_hash), [])) , Request]), 
-	ok.
-
-
+ 	Request = Record#torrent.announce ++ "?info_hash=" ++
+		convert_byte_to_hex(
+		binary_to_list(<<159,165,60,192,75,22,56,244,28,126,104,67,112,68,107,52,157,95,98,55>>), []) ++
+		"&peer_id=" ++ Peer_id ++
+		"&port=6881&downloaded=0&left=" ++
+		integer_to_list(length(Record#torrent.info#torrent_info.pieces)) ++
+		"&event=started".
 
 convert_byte_to_hex([H | T] , Acc)-> 
 	convert_byte_to_hex( T, Acc ++ "%" ++ io_lib:format("~2.16.0b", [H]));
@@ -64,50 +68,3 @@ convert_byte_to_hex([] , Acc) ->
 get_hash_info(Data)->
 	[_,  {_, Info}, _ , _]  =  Data,
 	io:format("Infoooooo ~p endddddd", [Info]).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
