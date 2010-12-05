@@ -3,8 +3,8 @@
 %% Description: TODO: Add description to openFile
 -module(open_file).
 -behaviour(gen_server).
--export([handle_call/3,handle_cast/2,handle_info/2,terminate/2,code_change/3,init/1]).
--export([open_file/1]).
+-export([handle_call/3,handle_cast/2,handle_info/2,terminate/2,code_change/3,init/1,start/0,stop/0]).
+-export([open_file/1,start/1]).
 
 -include_lib("kernel/include/file.hrl").
 
@@ -13,15 +13,15 @@
 start()->
 	case gen_server:start(?MODULE,[],[]) of
 		{ok,Pid}->
-			event_manager:register(Pid),
+			%event_manager:register(Pid),
 			{ok,Pid};
 		A->
 			A
 	end.
 %%Unregisters the PId from the event_manager and stops the server
-stop(Pid)->
-	event_manager:unregister(Pid),
-	stop().
+%stop(Pid)->
+%	event_manager:unregister(Pid),
+%	stop().
 %%Stops the server but doesn't unregister the Pid
 stop()->
 	gen_server:cast(?MODULE,stop).
@@ -33,10 +33,10 @@ stop()->
 init(_Args)->
 	{ok,[]}.
 
-handle_call({parse_torrent_file, File}, _From, State) ->
+handle_call({parse_torrent_file, _File}, _From, State) ->
     {reply, ok, State}.
 
-handle_cast({torrent_file_parsed, ParsedData}, State) ->
+handle_cast({torrent_file_parsed, _ParsedData}, State) ->
     {noreply, State};
 
 handle_cast(stop, State) -> {stop, normal, State}.
@@ -65,5 +65,20 @@ open_file(File) ->
 	  		{File, error, Reason}
     end.
 
-
+start(File)->
+    case file:open(File, [read]) of
+		{ok, IoDevice} ->
+	  		{ok, FileInfo} = file:read_file_info(File),
+	  		case file:read(IoDevice, FileInfo#file_info.size) of
+	    		{ok, Data} ->
+					event_manager:notify({torrent_file_content,Data});
+					%ParsedData = torrent_file_parser:decode(Data),
+					%gen_server:cast(controller, {torrent_file_parsed, ParsedData});
+					%controller:parse_torrent_done(ParsedData);
+	    		A ->
+					A
+	  		end;
+      	{error, Reason} ->
+	  		{File, error, Reason}
+    end.
 

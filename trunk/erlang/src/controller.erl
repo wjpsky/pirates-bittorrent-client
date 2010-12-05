@@ -34,6 +34,22 @@ handle_cast({torrent_file_parsed, ParsedData}, State) ->
     spawn(tracker, start, [Record, State]),	
     {noreply, State};
 
+handle_cast({notify_event, {parse_torrent_file,File}}, State) ->	
+	spawn(open_file,start,[File]),
+	{noreply, State};
+
+handle_cast({notify_event, {torrent_file_content,Data}}, State) ->	
+	spawn(torrent_file_parser,decode,[Data]),
+	{noreply, State};
+
+handle_cast({notify_event, {torrent_file_parsed_data,ParsedData}}, State) ->	
+	spawn(file_records,toRec,[ParsedData]),
+	{noreply, State};
+
+handle_cast({notify_event, {torrent_record,Rec}}, State) ->	
+	file_records:test(Rec),
+	{noreply, State};
+
 handle_cast(stop, State) -> {stop, normal, State}.
 
 handle_info(_Info, State) -> {noreply, State}.
@@ -50,6 +66,8 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 start() ->
 	case gen_server:start({local, ?MODULE}, ?MODULE, [], []) of
 		{ok, Pid} ->
+			event_manager:start(),
+			event_manager:register(Pid),
 			Pid;
 		{error, Reason} ->
 			error_logger:error_report({"An error occurred", Reason, [{line,?LINE},{module,?MODULE}]})
@@ -69,7 +87,8 @@ stop() ->
 %% =============================================================================
 
 parse_torrent_file(File) ->
-	gen_server:call(?MODULE, {parse_torrent_file, File}).
+	event_manager:notify({parse_torrent_file,File}).
+	%gen_server:call(?MODULE, {parse_torrent_file, File}).
 
 %% =============================================================================
 %% LOCAL FUNCTIONS
