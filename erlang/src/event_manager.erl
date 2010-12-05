@@ -22,7 +22,7 @@ handle_cast({register,Pid}, State) ->
 handle_cast({unregister,Pid}, State) -> 
 	{noreply,lists:delete(Pid, State)};
 handle_cast({notify,Event}, State) ->
-	[Pid!{notify_event,Event}||Pid<-State],
+	[gen_server:cast(Pid,{notify_event,Event})||Pid<-State],
 	{noreply,State};
 handle_cast(stop, State) -> 
 	{stop, normal, State}.
@@ -57,6 +57,8 @@ stop() ->
 %%
 %% API Functions
 %%
+%The process who wants to be registered should be gen_server,
+%then it will receive notifications by handle_cast
 register(Pid)->
 	gen_server:cast(?MODULE,{register,Pid}).
 

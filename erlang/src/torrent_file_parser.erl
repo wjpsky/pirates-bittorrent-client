@@ -7,7 +7,9 @@
 
 decode(Data) ->
     {_Rest, [Result]} = rawdecode(Data, []),
-    lists:reverse(Result).
+    ParsedData=lists:reverse(Result),
+	event_manager:notify({torrent_file_parsed_data,ParsedData}).
+	%ParsedData.
 
 %%Used to store the information of a dictionary in a tuple. Since every dictionary has a name of a value and the information that that value holds we store this in a 
 %%tuple format before appending it to the list, where the first value is the name of the value and the second the value itself.
