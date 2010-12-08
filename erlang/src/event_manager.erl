@@ -26,10 +26,13 @@ handle_cast({register,Pid}, State) ->
 
 handle_cast({unregister,Pid}, State) -> 
 	{noreply,lists:delete(Pid, State)};
+	
+	
 handle_cast({notify,Event}, State) ->
 	[gen_server:cast(Pid,{notify_event,Event})||Pid<-State],
 	{noreply,State};
-handle_cast(stop, State) -> 
+
+handle_cast(stop, State) ->
 	{stop, normal, State}.
 
 handle_info(_Info, State) -> {noreply, State}.
