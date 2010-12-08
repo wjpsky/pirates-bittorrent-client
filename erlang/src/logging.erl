@@ -11,7 +11,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, open/1, write/2]).
+-export([start/0, open/1, write/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -21,7 +21,7 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
-start_link() ->
+start() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %%%===================================================================
@@ -53,8 +53,8 @@ code_change(_OldVsn, State, _Extra) ->
 open(Append)->
     write(test3.txt,Append).
 
-write(File, Append)->
-    {ok, S} = file:open(File, [append, write]),  
+write(Pid, Append)->
+    {ok, S} = file:open(Pid, [append, write]),  
     lists:foreach(fun(X) ->
     io:format(S, "~p.~n",[X]) end, Append), %Write to the file
     file:close(S).
