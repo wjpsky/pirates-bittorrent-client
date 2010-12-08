@@ -4,7 +4,7 @@
 -module(open_file).
 -behaviour(gen_server).
 -export([handle_call/3,handle_cast/2,handle_info/2,terminate/2,code_change/3,init/1,start/0,stop/0]).
--export([open_file/1,start/1]).
+-export([start/1]).
 
 -include_lib("kernel/include/file.hrl").
 
@@ -49,21 +49,21 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 
 %%Function that opens a file, and returns the data of the file 
-open_file(File) ->
-    case file:open(File, [read]) of
-		{ok, IoDevice} ->
-	  		{ok, FileInfo} = file:read_file_info(File),
-	  		case file:read(IoDevice, FileInfo#file_info.size) of
-	    		{ok, Data} ->
-					ParsedData = torrent_file_parser:decode(Data),
-					%gen_server:cast(controller, {torrent_file_parsed, ParsedData});
-					controller:parse_torrent_done(ParsedData);
-	    		A ->
-					A
-	  		end;
-      	{error, Reason} ->
-	  		{File, error, Reason}
-    end.
+%open_file(File) ->
+ %   case file:open(File, [read]) of
+	%	{ok, IoDevice} ->
+	 % 		{ok, FileInfo} = file:read_file_info(File),
+	  %		case file:read(IoDevice, FileInfo#file_info.size) of
+	   % 		{ok, Data} ->
+		%			ParsedData = torrent_file_parser:decode(Data),
+		%			%gen_server:cast(controller, {torrent_file_parsed, ParsedData});
+		%			controller:parse_torrent_done(ParsedData);
+	    %		A ->
+		%			A
+	  	%	end;
+      	%{error, Reason} ->
+	  	%	{File, error, Reason}
+    %end.
 
 start(File)->
     case file:open(File, [read]) of

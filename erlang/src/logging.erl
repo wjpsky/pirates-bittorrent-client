@@ -1,4 +1,4 @@
-%%%-------------------------------------------------------------------
+ %%%-------------------------------------------------------------------
 %%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>
 %%% @copyright (C) 2010, Niel Madlani
 %%% @doc
@@ -58,4 +58,3 @@ write(Pid, Append)->
     lists:foreach(fun(X) ->
     io:format(S, "~p.~n",[X]) end, Append), %Write to the file
     file:close(S).
-
