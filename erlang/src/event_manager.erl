@@ -22,6 +22,7 @@ handle_cast({register,Pid}, State) ->
 	logging:start(),
 	logging:open(Pid),
 	logging:write(Pid,State),
+	
 	{noreply,[Pid|State]};
 
 handle_cast({unregister,Pid}, State) -> 

@@ -15,7 +15,7 @@
 
 -behaviour(gen_server).
 
--export([init/1, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1]).
+-export([init/1,handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1]).
 
 
 %% =============================================================================
@@ -25,15 +25,8 @@
 init([]) -> 
 	{ok, peer_id:get_id()}.
 
-%handle_call({parse_torrent_file, File}, _From, State) ->
- %   spawn(open_file, start, [File]),
-  %  {reply, ok, State}.
-
-%handle_cast({torrent_file_parsed, ParsedData}, State) ->
- %   io:format("Torrent file parsed.\n"),
-  %  Record = file_records:toRec(ParsedData),
-   % spawn(tracker, start, [Record, State]),	
-   % {noreply, State};
+handle_call(_Message, _From, State) ->
+    {noreply, State}.
 
 handle_cast({notify_event, {parse_torrent_file,File}}, State) ->	
 	spawn(open_file,start,[File]),
