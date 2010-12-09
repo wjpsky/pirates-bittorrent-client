@@ -68,5 +68,6 @@ hash_info(List)->
 %%      crypto:stop(),
      Hash.
 test(Rec)->
-   io:format("~w~n",[[{announce, Rec#torrent.announce}, {info_hash,Rec#torrent.info_hash}]]).
+	event_manager:notify(test_was_called),
+	io:format("~w~n",[[{announce, Rec#torrent.announce}, {info_hash,Rec#torrent.info_hash}]]).
 %% Rec#torrent.info_hash

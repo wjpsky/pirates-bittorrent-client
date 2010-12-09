@@ -50,6 +50,7 @@ start(File)->
 					A
 	  		end;
       	{error, Reason} ->
-	  		{File, error, Reason}
+			event_manager:notify({open_torrent_file_error,Reason})
+	  		%{File, error, Reason}
     end.
 

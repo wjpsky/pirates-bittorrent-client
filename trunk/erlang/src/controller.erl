@@ -15,7 +15,7 @@
 
 -behaviour(gen_server).
 
--export([init/1,handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1]).
+-export([init/1,handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1,fetchFromQ/0]).
 
 
 %% =============================================================================
@@ -23,28 +23,33 @@
 %% =============================================================================
 
 init([]) -> 
-	{ok, peer_id:get_id()}.
+	{ok, {peer_id:get_id(),[]} }.
 
-handle_call(_Message, _From, State) ->
+handle_call(fetchQ, _From, State) ->
+	{Element,NewState}=fetchQ(State),
+	{reply,Element,NewState};
+handle_call(_Request, _From, State) ->
     {noreply, State}.
 
 handle_cast({notify_event, {parse_torrent_file,File}}, State) ->	
 	spawn(open_file,start,[File]),
-	{noreply, State};
+	{noreply, addToQ({parse_torrent_file,File},State)};
 
 handle_cast({notify_event, {torrent_file_content,Data}}, State) ->	
 	spawn(torrent_file_parser,decode,[Data]),
-	{noreply, State};
+	{noreply, addToQ({torrent_file_content,Data},State)};
 
 handle_cast({notify_event, {torrent_file_parsed_data,ParsedData}}, State) ->	
 	spawn(file_records,toRec,[ParsedData]),
-	{noreply, State};
+	{noreply, addToQ({torrent_file_parsed_data,ParsedData},State)};
 
 handle_cast({notify_event, {torrent_record,Rec}}, State) ->	
 	file_records:test(Rec),
-	{noreply, State};
+	{noreply, addToQ({torrent_record,Rec},State)};
 
-handle_cast(stop, State) -> {stop, normal, State}.
+handle_cast(stop, State) -> {stop, normal, State};
+
+handle_cast(Request, State) -> {noreply, addToQ(Request,State)}.
 
 handle_info(_Info, State) -> {noreply, State}.
 
@@ -61,7 +66,7 @@ start() ->
 	case gen_server:start({local, ?MODULE}, ?MODULE, [], []) of
 		{ok, Pid} ->
 			%%The logger file is created
-			logger:create_file("logger.txt"),
+			%logger:create_file("logger.txt"),
 			
 			event_manager:start(),
 			event_manager:register(Pid),
@@ -73,6 +78,7 @@ start() ->
 stop() ->
 	case gen_server:cast(?MODULE, stop) of
 		ok ->
+			event_manager:stop(),
 			ok;
 		_ ->
 			{error, stop_error}
@@ -85,8 +91,17 @@ stop() ->
 
 parse_torrent_file(File) ->
 	event_manager:notify({parse_torrent_file,File}).
-	%gen_server:call(?MODULE, {parse_torrent_file, File}).
+
+fetchFromQ()->
+	gen_server:call(?MODULE, fetchQ).
 
 %% =============================================================================
 %% LOCAL FUNCTIONS
 %% =============================================================================
+
+addToQ(Element,{ID,Queue})->
+	{ID,Queue++[Element]}.
+fetchQ({ID,[]})->
+	{empty,{ID,[]}};
+fetchQ({ID,[H|T]})->
+	{H,{ID,T}}.
