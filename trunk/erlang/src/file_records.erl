@@ -8,8 +8,7 @@
 -include("torrent_records.hrl"). 
 
 toRec(Data)->
-    Rec=toRec(Data,#torrent{}),
-	event_manager:notify({torrent_record,Rec}).
+    toRec(Data,#torrent{}).
 
 toRec([],Tor)->
     Tor;
@@ -68,6 +67,5 @@ hash_info(List)->
 %%      crypto:stop(),
      Hash.
 test(Rec)->
-	event_manager:notify(test_was_called),
-	io:format("~w~n",[[{announce, Rec#torrent.announce}, {info_hash,Rec#torrent.info_hash}]]).
+   io:format("~w~n",[[{announce, Rec#torrent.announce}, {info_hash,Rec#torrent.info_hash}]]).
 %% Rec#torrent.info_hash

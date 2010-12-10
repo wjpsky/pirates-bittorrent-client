@@ -3,8 +3,8 @@
 %% Description: TODO: This module simply generate an 20 char Peer Id
 -module(peer_id).
 
--define(ID_LENGTH, 20).
--define(CHAR_LIST, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"). %36 chars
+-define(ID_LENGTH, 12).
+-define(CHAR_LIST, "0123456789abcdefghijklmnopqrstuvwxyz"). %36 chars
 
 
 
@@ -17,7 +17,8 @@
 %% API Functions
 %%----------------------------------------------------------------------
 get_id()->
-	get_id(?ID_LENGTH , []).
+	random:seed(now()),
+	"-PB0000-" ++ get_id(?ID_LENGTH , []).
  
 %%----------------------------------------------------------------------
 %% Local Functions

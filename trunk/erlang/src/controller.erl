@@ -10,6 +10,17 @@
 %%
 %%              We need to start this process from a erl node started with "erl
 %%              -sname 'erlangpbtc@localhost'".
+%%
+%% RUNNING THE APPLICATION:
+%%
+%% <modify parse_torrent_file() below>
+%% application:start(sasl).
+%% l(controller).
+%% l(open_file).
+%% l(torrent_file_parser).
+%% controller:start().
+%% controller:parse_torrent_file().
+
 
 -module(controller).
 
