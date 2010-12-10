@@ -11,7 +11,18 @@
 
 %%Starts the gen_server and registers the Pid to the event_manager
 start()->
-  gen_server:start(?MODULE,[],[]).
+	case gen_server:start(?MODULE,[],[]) of
+		{ok,Pid}->
+			%event_manager:register(Pid),
+			{ok,Pid};
+		A->
+			A
+	end.
+%%Unregisters the PId from the event_manager and stops the server
+%stop(Pid)->
+%	event_manager:unregister(Pid),
+%	stop().
+%%Stops the server but doesn't unregister the Pid
 stop()->
 	gen_server:cast(?MODULE,stop).
 
@@ -38,6 +49,21 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 
 %%Function that opens a file, and returns the data of the file 
+%open_file(File) ->
+ %   case file:open(File, [read]) of
+	%	{ok, IoDevice} ->
+	 % 		{ok, FileInfo} = file:read_file_info(File),
+	  %		case file:read(IoDevice, FileInfo#file_info.size) of
+	   % 		{ok, Data} ->
+		%			ParsedData = torrent_file_parser:decode(Data),
+		%			%gen_server:cast(controller, {torrent_file_parsed, ParsedData});
+		%			controller:parse_torrent_done(ParsedData);
+	    %		A ->
+		%			A
+	  	%	end;
+      	%{error, Reason} ->
+	  	%	{File, error, Reason}
+    %end.
 
 start(File)->
     case file:open(File, [read]) of
@@ -45,12 +71,14 @@ start(File)->
 	  		{ok, FileInfo} = file:read_file_info(File),
 	  		case file:read(IoDevice, FileInfo#file_info.size) of
 	    		{ok, Data} ->
-					event_manager:notify({torrent_file_content,Data});
+					% event_manager:notify({torrent_file_content,Data});
+					ParsedData = torrent_file_parser:decode(Data),
+					gen_server:cast(controller, {torrent_file_parsed, ParsedData}),
+					ParsedData;
 	    		A ->
 					A
 	  		end;
       	{error, Reason} ->
-			event_manager:notify({open_torrent_file_error,Reason})
-	  		%{File, error, Reason}
+	  		{File, error, Reason}
     end.
 

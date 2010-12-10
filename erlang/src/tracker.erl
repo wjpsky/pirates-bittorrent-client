@@ -30,31 +30,35 @@ start()->
 %% -spec(start/1 :: (string()) -> term()).
 
 start(Record, Peer_id)->
+	io:format("Contacting tracker..."),
 	inets:start(),
 	Request = generate_get_request(Record, Peer_id),
 	io:format("~p~n", [Request]),
 	case httpc:request(Request) of
 		{ok, {_,_,Respond}} ->
+			io:format("Got tracker response..."),
 			Test = torrent_file_parser:decode(Respond),
+			io:format("~p ", [Test]),
 			[{peers,List_peers},{interval,_Interval},{incomplete,_Incomplete},{complete,_Complete}] = Test,
-			Hello = to_record(List_peers, []),
-			io:format("~p\n", [Hello]);
+			Hello = to_peer_record_list(List_peers, []),
+			io:format("Got ~p peers...\n", [length(Hello)]),
+			gen_server:cast(controller, {got_peers, Hello, Record#torrent.info#torrent_info.pieces, Record#torrent.info#torrent_info.piece_length, Peer_id, Record#torrent.info_hash});
 		Error ->  error_logger:error_msg("An error occurred", [Error,?LINE,?MODULE]) %,io:format("test error")
 	end.
 
 %% @doc this function convert a peer list to a list of peer record list.
--spec(to_record/2 :: ( term(),term()) -> term()).
+-spec(to_peer_record_list/2 :: ( term(),term()) -> term()).
 
-to_record([], Acc)->
+to_peer_record_list([], Acc)->
 	Acc;
-to_record([[{ip,Ip},{'peer id',Peer_id},{port, Port}]| Rest], Acc)->
+to_peer_record_list([[{ip,Ip},{'peer id',Peer_id},{port, Port}]| Rest], Acc)->
 	Peer = #peer{ ip= Ip, peer_id = Peer_id, port= Port },
-	to_record(Rest, [Peer|Acc]).
+	to_peer_record_list(Rest, [Peer|Acc]).
  
 generate_get_request(Record, Peer_id)->
  	Request = Record#torrent.announce ++ "?info_hash=" ++
 		convert_byte_to_hex(
-		binary_to_list(<<159,165,60,192,75,22,56,244,28,126,104,67,112,68,107,52,157,95,98,55>>), []) ++
+		binary_to_list(Record#torrent.info_hash), []) ++
 		"&peer_id=" ++ Peer_id ++
 		"&port=6881&downloaded=0&left=" ++
 		integer_to_list(length(Record#torrent.info#torrent_info.pieces)) ++
