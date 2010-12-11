@@ -1,5 +1,10 @@
 package org.ituniv.pirates.bittorrent;
 
+/**
+ * A class used for the {@link Torrent} mock objects. 
+ * 
+ * @author Jon Kristensen
+ */
 public class File
 {
 	private String path;

@@ -3,6 +3,11 @@ package org.ituniv.pirates.bittorrent;
 
 import java.util.List;
 
+/**
+ * Mock object class for testing the GUI while downloading torrents.
+ * 
+ * @author Jon Kristensen
+ */
 public class Torrent
 {
 	private Runnable fileDownloader = new Runnable()
