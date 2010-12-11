@@ -62,7 +62,7 @@ public class UITray {
 					boolean showFlag=shell.isVisible();
 					shell.setVisible(showFlag);
 					showMenu.setText(showFlag?"&Show":"&Hide");
-					tip.setText("QuickBt");
+					tip.setText("Pirates BitTorrent");
 					tip.setMessage("right click");
 					tip.setVisible(true);
 				}
@@ -102,7 +102,7 @@ public class UITray {
 					e.doit = false;
 					shell.setVisible(false);
 					showMenu.setText("S&how");
-					tip.setText("QuickBt");
+					tip.setText("Pirates BitTorrent");
 					tip.setMessage(getTrayMessage());
 					tip.setVisible(true);
 
@@ -124,7 +124,7 @@ public class UITray {
 	 * @return
 	 */
 	private String getTrayMessage(){
-		return "QuickBt1.0.0\n0(0)downing,0(0)seeding\n" +
+		return "Pirates BitTorrent\n0(0)downing,0(0)seeding\n" +
 		"0.0Kb/s down ,0.0Kb/s up";
 		//TODO
 	}
