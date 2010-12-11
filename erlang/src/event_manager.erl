@@ -18,11 +18,6 @@ init([]) -> {ok, []}.
 handle_call(_Message, _From, State) -> {reply, ok, State}.
 
 handle_cast({register,Pid}, State) ->
-	%%Expand to logging.erl
-	%logging:start(),
-	%logging:open(Pid),
-	%logging:write(Pid,State),
-	
 	{noreply,[Pid|State]};
 
 handle_cast({unregister,Pid}, State) -> 
