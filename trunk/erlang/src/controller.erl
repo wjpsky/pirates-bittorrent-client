@@ -128,7 +128,7 @@ stop() ->
 
 % @doc <p>Sends a gen_server message to start parsing the torrent file found at
 % the path <code>File</code>. This function can be called from either the shell
-% or the GUI.
+% or the GUI.</p>
 % @spec parse_torrent_file(File) -> ok
 %     File = string()
 -spec parse_torrent_file(File :: string()) -> ok.
