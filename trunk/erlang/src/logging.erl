@@ -1,5 +1,5 @@
  %%%-------------------------------------------------------------------
-%%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>
+%%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>, Nena Stojova
 %%% @copyright (C) 2010, Niel Madlani
 %%% @doc
 %%%
@@ -28,12 +28,18 @@ start() ->
 %%% gen_server callbacks
 %%%===================================================================
 init(_Args) ->
+	event_manager:register(self()),
     {ok,[]}.
 
 handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
 
+handle_cast({notify_event,Event},State)->
+	% now you can log 'Event'
+	% for example: 
+	% open(Event),
+	{noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
