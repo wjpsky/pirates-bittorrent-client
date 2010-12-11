@@ -20,7 +20,7 @@ public class StatusBar {
 		separatorLabel.setLocation(490, 2);
 		statusBar=new Label(composite,SWT.NONE);
 		statusBar.setAlignment(SWT.CENTER);
-		statusBar.setBounds(500, 2, 100, 20);
+		statusBar.setBounds(500, 2, 300, 100);
 		statusBar.setText("Pirates BitTorrent Client");
 		composite.layout();
 	}

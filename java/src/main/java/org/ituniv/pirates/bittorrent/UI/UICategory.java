@@ -43,7 +43,7 @@ public class UICategory {
 		}
 
 		TreeItem downloadItem = new TreeItem(tree, SWT.BORDER);
-		downloadItem.setText("download");
+		downloadItem.setText("downloading");
 		try {
 			downloadItem.setImage(new Image(sashForm.getDisplay(), ImageLoader
 					.addImage("image/downloading.png")));
