@@ -25,6 +25,7 @@
 % <li><code>controller:start().</code></li>
 % <li><code>controller:parse_torrent_file([INSERT FILE NAME]).</code></li>
 % </ol>
+% @end
 
 %%==============================================================================
 %% MODULE HEADER
