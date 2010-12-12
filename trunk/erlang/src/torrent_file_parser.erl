@@ -1,10 +1,13 @@
 %autor:Nena Stojova
 
+%%==============================================================================
+%% MODULE HEADER
+%%==============================================================================
 -module(torrent_file_parser).
 -export([decode/1,fetchString/3]).
 
-%Passes the data of the file to the rowdecode function that does the acctual decoding
 
+%Passes the data of the file to the rowdecode function that does the acctual decoding
 decode(Data) ->
     {_Rest, [Result]} = rawdecode(Data, []),
     ParsedData=lists:reverse(Result),
