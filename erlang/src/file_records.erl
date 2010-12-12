@@ -1,11 +1,17 @@
 %% Author: nenastojova
+
 %% Created: Nov 2, 2010
-%% Description: TODO: Add description to fileRecords
+%% Description: 
+
+%%==============================================================================
+%% MODULE HEADER
+%%==============================================================================
 -module(file_records).
 -export([toRec/1
 		 ,test/1,toRec/2
 		]).
 -include("torrent_records.hrl"). 
+
 
 toRec(Data)->
     toRec(Data,#torrent{}).
