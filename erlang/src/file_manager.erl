@@ -1,5 +1,5 @@
 %%---------------------------------------------------------- 
-%% @author mahdi abdinejadi <mehdi61b@gmail.com> @end
+%% @author Mahdi Abdinejadi <mehdi61b@gmail.com> @end
 %% @version 0.2
 %% @since Dec 1, 2010. 
 %% @doc

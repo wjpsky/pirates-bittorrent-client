@@ -1,5 +1,5 @@
 %%---------------------------------------------------------- 
-%% @author mahdi abdinejadi <mehdi61b@gmail.com> @end
+%% @author Mahdi Abdinejadi <mehdi61b@gmail.com> @end
 %% @version 0.1
 %% @since Nov 1, 2010. 
 %% @doc this module connect to tracker and request for the peers list. 

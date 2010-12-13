@@ -1,12 +1,15 @@
-%% Author: Mahdi Abdinejadi
-%% Created: Nov 23, 2010
-%% Description: TODO: This module simply generate an 20 char Peer Id
+%%---------------------------------------------------------- 
+%% @author Mahdi Abdinejadi <mehdi61b@gmail.com> @end
+%% @version 0.1
+%% @since Nov 23, 2010. 
+%% @doc This module simply generate an 20 char Peer Id. 
+%% @end
+%%----------------------------------------------------------
+
 -module(peer_id).
 
 -define(ID_LENGTH, 12).
 -define(CHAR_LIST, "0123456789abcdefghijklmnopqrstuvwxyz"). %36 chars
-
-
 
 %%----------------------------------------------------------------------
 %% Exported Functions
@@ -16,6 +19,10 @@
 %%----------------------------------------------------------------------
 %% API Functions
 %%----------------------------------------------------------------------
+
+%% @doc get an id with 20 char charector. @end
+-spec(get_id()-> string()).
+
 get_id()->
 	random:seed(now()),
 	"-PB0000-" ++ get_id(?ID_LENGTH , []).
@@ -23,6 +30,9 @@ get_id()->
 %%----------------------------------------------------------------------
 %% Local Functions
 %%----------------------------------------------------------------------
+
+%% genrate an list of chars at random.
+-spec(get_id/2 :: (integer(), list())-> list()).
 get_id(0, Acc)->
 	Acc;
 get_id(Num, Acc)->
