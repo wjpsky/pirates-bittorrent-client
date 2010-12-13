@@ -6,5 +6,5 @@ start_link() ->
     supervisor:start_link(download_sup, []).
 
 init([]) -> 
-	Child = {downloader_fsm, {tracker, start, []}, permanent, 2000, worker, [downloader_fsm]},
+	Child = {tracker, {tracker, start_link, []}, permanent, 2000, worker, [tracker]},
 	{ok, {{one_for_all, 1, 1}, [Child]}}.
