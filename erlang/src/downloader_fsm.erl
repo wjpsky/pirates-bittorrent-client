@@ -214,12 +214,11 @@ select_piece([PieceID|Tail], BitField) ->
 	% We calculate how many bits we have to read in order to be guaranteed to
 	% read whole bytes when doing the bit field matching below. Remember: "If
 	% something is stupid, but works, then it's not stupid."
-	SoUgly = 8 - (PieceID rem 8),
+	SoUgly = 7 - (PieceID rem 8),
 
 	% Here we get the bit in the bit field that corresponds to the piece ID. If
 	% it's a 1 then the peer has that particular piece.
-	<<_:PieceID/integer, Bit:1/integer, _:7/integer, _:SoUgly/integer,
-	  _/binary>> = BitField,
+	<<_:PieceID/integer, Bit:1/integer, _:SoUgly/integer, _/binary>> = BitField, % TODO: Overflow
 	
  	case Bit of
 		0 ->
