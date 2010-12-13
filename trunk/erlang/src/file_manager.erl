@@ -1,8 +1,9 @@
 %%---------------------------------------------------------- 
-%% @author mahdi abdinejadi <mehdi61b@gmail.com; max.jadi@pontarius.org> @end
-%% @version 0.1
+%% @author mahdi abdinejadi <mehdi61b@gmail.com> @end
+%% @version 0.2
 %% @since Dec 1, 2010. 
-%% @doc this gen_server is responsible for writing file on hard disk. 
+%% @doc
+%% This gen_server is responsible for writing file on hard disk. 
 %% @end
 %%----------------------------------------------------------
 -module(file_manager).
@@ -11,28 +12,54 @@
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, 
+			terminate/2, code_change/3]).
 
-%% -record(state, { files = [] :: [ file() ] }).
+%% Defult file location.
+-define(LOCATION, "/home/mehdi/test").
 
--record(file, { name :: string() , size :: integer() , location = "/home" :: string(), 
-				piece_size :: integer() , piece_number :: integer() , info = [] :: list()}).
-%% -type( file() :: #file{} ).
+%% File basic information 
+-record(file, { name :: string() , size :: integer() , location :: string(), 
+				piece_size :: integer() , piece_number :: integer() , 
+				info = [] :: list()}).
+
 %% --------------------------------------------------------------------
 %% External exports
 %% --------------------------------------------------------------------
--export([start/5, start/4, stop/0, write_piece_data/3, new_file/4, new_file/5, get_info/1, update_state/4]).
+-export([start/5, start/4, stop/0, write_piece_data/3, new_file/4, new_file/5, 
+		 get_info/1, update_state/4]).
 
 %% gen_server callbacks
 
 %% ====================================================================
 %% External functions
 %% ====================================================================
-start(File_name, Size, Piece_size, Piece_number, Location)->
-	start({File_name, Size, Piece_size, Piece_number, Location}).
 
-start(File_name, Size, Piece_number, Piece_size)->
-	start(File_name, Size, Piece_number, Piece_size, #file.location ).
+%% @doc 
+%% Start gen_server after creating a file on the respective location. 
+%% @end
+-spec start(File_name :: string() , Size :: integer() , Piece_size :: integer(), 
+			Piece_number :: integer() , Location :: string() )->
+				{ok,pid()} | ignore | {error,term()}.
+
+start(File_name, Size, Piece_size, Piece_number, Location)->
+	error_logger:info_msg("start2 :", %% for test and logging 
+		[File_name, Size, Piece_size, Piece_number, Location]),
+	start({File_name, Size, Piece_size, Piece_number, Location}).
+	
+
+%% @doc Start gen_server after creating a file on default location. @end
+-spec (start/4 :: ( string() , integer() , integer(), integer())-> 
+		{ok,pid()} | ignore | {error,term()} ).
+       
+start(File_name, Size, Piece_size, Piece_number)->
+	error_logger:info_msg("start1:",  %% for test and logging 
+		[File_name, Size, Piece_size, Piece_number,?LOCATION ]),
+	start(File_name, Size, Piece_size, Piece_number, ?LOCATION ).
+
+
+%% @doc Stop gen_server. @end
+-spec (stop/0 :: ()-> ok | {error, term()} ).
 
 stop() ->
 	case gen_server:cast(?MODULE, stop) of
@@ -41,13 +68,42 @@ stop() ->
 		Error ->
 			Error
 	end.
+
+%% @doc 
+%% Write a piece data on coresponding position of the file base on piece number
+%% and send a message as call back (ok | Error). 
+%% @end
+-spec(write_piece_data/3 :: (string(), integer(), binary())->  
+								ok | {error, term()} ).
+
 write_piece_data(File_name, Peice_Num, Binary_Data)->
-	gen_server:call(?MODULE, {write, File_name, Peice_Num, Binary_Data}).
+	gen_server:cast(?MODULE, 
+					{write, File_name, Peice_Num, Binary_Data, self()}).
+
+
+%% @doc Create a new file. @end
+-spec (new_file/5 :: ( string() , integer() , integer(), integer(), string())-> 
+		{ok,pid()} | ignore | {error,term()} ).
 
 new_file(File_name, Size, Piece_size, Piece_number, Location)->
-	gen_server:call(?MODULE, {new_file, File_name, Size, Piece_size, Piece_number, Location}).
+	gen_server:cast(?MODULE, {new_file, File_name, Size, Piece_size,
+							   Piece_number, Location, self()}).
+
+
+%% @doc Create a new file on default directory. @end
+-spec (new_file/4 :: ( string() , integer() , integer(), integer())-> 
+		{ok,pid()} | ignore | {error,term()} ).
+
 new_file(File_name, Size, Piece_size, Piece_number)->
-	gen_server:call(?MODULE, {new_file, File_name, Size, Piece_size, Piece_number, #file.location}).
+	gen_server:cast(?MODULE, {new_file, File_name, Size, Piece_size,
+							   Piece_number, ?LOCATION ,self()}).
+
+
+%% @doc 
+%% Send a message to gen_server for getting a list of written piece numbers as
+%% call back message. 
+%% @end
+-spec(get_info/1 :: (string())-> ok ).
 
 get_info(File_name)->
 	gen_server:cast(?MODULE, {get_info, File_name, self()}).
@@ -78,27 +134,8 @@ init([State]) ->
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
 
-handle_call({write, File_name, Peice_Num, Binary_Data}, _From, State)->
-	try write_data({File_name, Peice_Num, Binary_Data}, State) of
-		{ok, Files_list} ->
-			error_logger:error_report({"write file hande call state$:", State , [{line,?LINE},{module,?MODULE}]}),
-			{reply, ok, Files_list}
-	catch
-		Error->
-			{reply, Error, State}
-	end;
-
-handle_call({new_file, File_name, Size, Piece_size, Piece_number, Location}, _From, State)->
-	New_state =  [ #file{name = File_name, size = Size, piece_size = Piece_size, 
-									   piece_number = Piece_number, location = Location }| State],
-	try generate_file(File_name, Size, Location) of
-		ok->
-			{reply, ok, New_state}			
-	catch 
-		Error->
-			error_logger:error_report({"An error occurred", Error, [{line,?LINE},{module,?MODULE}]}),
-			{reply, Error, State}
-	end. 
+handle_call(_Message, _From,State)-> %% not supported.
+	{reply, ok, State}.	
 		
 %% --------------------------------------------------------------------
 %% Function: handle_cast/2
@@ -108,14 +145,50 @@ handle_call({new_file, File_name, Size, Piece_size, Piece_number, Location}, _Fr
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
 
+%% Send a sorted list of piece numbers that written in the hard drive. 
 handle_cast({get_info, File_name, Pid}, State)->
 	Result =  get_info(File_name, State),
 	Pid ! Result,
-	io:format("get_info result: ~p \n",[Result]),
+	error_logger:error_report({"write file hande cast state$:",
+				[{line,?LINE},{module,?MODULE}]}),%% for test and logging 
 	{noreply, State};
-handle_cast(stop, State) -> 
-	{stop, normal, State}.
 
+%% stop the gen_server.
+handle_cast(stop, State) -> 
+	{stop, normal, State};
+
+%% call write_data function and send ok or Error as result by message passing 
+%% and update written pieces list.
+handle_cast({write, File_name, Peice_Num, Binary_Data, Pid}, State)->
+	try write_data({File_name, Peice_Num, Binary_Data}, State) of
+		{ok, New_state} ->
+			error_logger:error_report({"write file hande cast state$:", State ,
+				[{line,?LINE},{module,?MODULE}]}),%% for test and logging
+			Pid ! ok,
+			{noreply, New_state}
+	catch
+		Error->
+			Pid ! Error,
+			{noreply, State}
+	end;
+
+%% call generate_file function and send ok or Error as result by 
+%% message passing; Also update the State.
+handle_cast({new_file, 
+			 File_name, Size, Piece_size, Piece_number, Location, Pid}, State)->
+	New_state =  [ #file{name = File_name, size = Size, piece_size = Piece_size, 
+					piece_number = Piece_number, location = Location }| State],
+	try generate_file(File_name, Size, Location) of
+		ok->
+			Pid ! ok,
+			{noreply, New_state}			
+	catch 
+		Error->
+			Pid! Error,
+			error_logger:error_report({"An error occurred",
+				Error, [{line,?LINE},{module,?MODULE}]}),%% for test and logging
+			{reply, Error, State}
+	end.
 %% --------------------------------------------------------------------
 %% Function: handle_info/2
 %% Description: Handling all non call/cast messages
@@ -123,7 +196,7 @@ handle_cast(stop, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
-handle_info(_Info, State) ->
+handle_info(_Info, State) -> %% not supported.
     {noreply, State}.
 
 %% --------------------------------------------------------------------
@@ -139,30 +212,45 @@ terminate(Reason, State) ->
 %% Purpose: Convert process state when code is changed
 %% Returns: {ok, NewState}
 %% --------------------------------------------------------------------
-code_change(_OldVsn, State, _Extra) ->
+code_change(_OldVsn, State, _Extra) -> %% not supported.
     {ok, State}.
 
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
+
+%% call generate_file and if to return ok the start genserver, otherwise it 
+%% return an Error.
+-spec(start({string(), integer(), integer(), integer(), string()})-> 
+			ok | {error, term()}).
+
 start({Name, Size, Piece_size, Piece_number, Location})->
-			io:format("test~p$$~p", [Location , Name ]),
+			error_logger:info_msg("start{  }:", % for test and logging 
+				[Name, Size, Piece_size, Piece_number, Location]),
 	try generate_file(Name, Size, Location) of
 		ok ->
 			State = [#file{ name = Name, size = Size, location = Location ,
-											   piece_size = Piece_size, piece_number = Piece_number }],
-			io:format("test$$~p$$", [State ]),
+				piece_size = Piece_size, piece_number = Piece_number }],
+			io:format("test$$~p$$", [State ]), % for test only
 			case gen_server:start({local, ?MODULE}, ?MODULE, [State] , []) of
-				{ok, _Pid} ->
-					ok;
+				{ok, Pid} ->
+					{ok, Pid};
 				{error, Reason} ->
-					error_logger:error_report({"An error occurred", Reason, [{line,?LINE},{module,?MODULE}]})
+					error_logger:error_report({"An error occurred", Reason,
+						 [{line,?LINE},{module,?MODULE}]}),%for test and logging
+					{error, Reason}
 			end
 	catch 
 		Error->
-			error_logger:error_report({"An error occurred", Error, [{line,?LINE},{module,?MODULE}]}),
+			error_logger:error_report({"An error occurred", Error, 
+				[{line,?LINE},{module,?MODULE}]}),% for test and logging
 			Error
 	end.
+
+
+%% Create a file with respected size; basiclly it only write a bite at the last
+%% byte of the file; it return ok or crash.
+-spec(generate_file/3 :: (string(), integer(), string())-> ok ).
 
 generate_file(Name , Size, Location)->
 	ok = file:write_file(Location ++"/"++ Name , <<>>),
@@ -172,39 +260,66 @@ generate_file(Name , Size, Location)->
 	ok = file:close(IoDevice),
 	ok.
 
+
+%% It write piece data; it caculate the postion of piece data base on 
+%% piece number and add piece number to info list of the state.
+-spec(write_data/2 :: ({string(), integer(), binary()},list())-> {ok, term()}).
+
 write_data({File_name, Peice_Num, Binary_Data}, State)->
 	File_record = extract_record(State , File_name),
-	{ok, IoDevice} = file:open( File_record#file.location ++"/"++ File_name , [raw , write]),
-	{ok, _ } = file:position(IoDevice, (Peice_Num - 1) * File_record#file.piece_size),
+	{ok, IoDevice} = file:open( File_record#file.location ++"/"
+							  ++ File_name , [raw , write]),
+	{ok, _ } = file:position(IoDevice, (Peice_Num - 1) * 
+								File_record#file.piece_size),
 	ok = file:write(IoDevice, Binary_Data ),
 	ok = file:close(IoDevice),
 	{ok, update_state(State, File_record, Peice_Num, [])}. 
 
+
+%% Return a sorted list of written piece numbers for coresponding file.
+-spec(get_info/2 :: (string(), list())-> list() ).
 get_info(File_name, State)->
 	File_record = extract_record(State, File_name),
-	File_record#file.info.
+	lists:sort(File_record#file.info).
 
-%% base on trust internal data convention, this function crash if it get wrong information.  	
+
+%% Notic: base on trust internal data convention, this function crash if it get
+%% wrong information. 
+%% It update state of the gen_server by adding piece number to coressponding 
+%% file record on the State.
+-spec(update_state(list(), term(), integer(), list())-> list() ).
+
 update_state([Record | Rest], File_record, Peice_Num, Acc)->
 	case Record#file.name == File_record#file.name of
 		true ->
 			New_info = Record#file.info ++ [Peice_Num],
-			error_logger:error_report({"udate data $new_info$:", New_info , [{line,?LINE},{module,?MODULE}]}),
+			error_logger:error_report({"udate data $new_info$:", New_info , 
+					[{line,?LINE},{module,?MODULE}]}), % for test and logging
 			New_record = Record#file{info = New_info},
-			error_logger:error_report({"udate data $new_record$:", New_record , [{line,?LINE},{module,?MODULE}]}),
+			error_logger:error_report({"udate data $new_record$:", New_record , 
+					[{line,?LINE},{module,?MODULE}]}), % for test and logging
 			lists:flatten(Rest ++ [New_record] ++ Acc);
 		false -> 
-			error_logger:error_report({"udate data $Record$:", Record , [{line,?LINE},{module,?MODULE}]}),
+			error_logger:error_report({"udate data $Record$:", Record , 
+					[{line,?LINE},{module,?MODULE}]}), % for test and logging
 			update_state(Rest, File_record, Peice_Num, [Record|Acc])
 	end;
+
 update_state([], _File_name, _Peice_Num, Acc)->
 	Acc.
 
+
+%% Extract respective record to file name form list of records(state) and 
+%% returns the record or not_exist.
+-spec(extract_record(list(), string())->  term() | not_exist ).
+
 extract_record([Record | Rest], File_name)->
-	error_logger:error_report({"An error occurred $extract_record$ in extract_record", Record#file.name, [{line,?LINE},{module,?MODULE}]}),
+	error_logger:error_report({"An error occurred in extract_record",
+				 [{line,?LINE},{module,?MODULE}]}), % for test and logging
 	case Record#file.name == File_name of
 		true -> Record;
 		false -> extract_record(Rest, File_name)
 	end;
+
 extract_record([], _File_name)->
 	not_exist .
