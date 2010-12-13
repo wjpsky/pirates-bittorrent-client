@@ -59,7 +59,7 @@ handle_call({parse_torrent_file, File}, _From, State) ->
 handle_cast({torrent_file_parsed, ParsedData}, State) ->
     io:format("Torrent file parsed.\n"),
     Record = file_records:toRec(ParsedData),
-    spawn(tracker, start, [Record, State]),
+    spawn(tracker, get_peers, [Record, State]),
 	{noreply, State};
 
 % Handles the got_peers message sent from the tracker module. It spawns a
