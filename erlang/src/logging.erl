@@ -22,7 +22,7 @@
 %%% API
 %%%===================================================================
 start() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+    gen_server:start({local, ?MODULE}, ?MODULE, [], []).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -38,7 +38,7 @@ handle_call(_Request, _From, State) ->
 handle_cast({notify_event,Event},State)->
 	% now you can log 'Event'
 	% for example: 
-	% open(Event),
+	%open(Event),
 	{noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
@@ -57,7 +57,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 open(Append)->
-    write(test3.txt,Append).
+    write(logMessage.txt,Append).
 
 write(Pid, Append)->
     {ok, S} = file:open(Pid, [append, write]),  
