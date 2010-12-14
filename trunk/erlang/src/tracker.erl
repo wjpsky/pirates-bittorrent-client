@@ -1,10 +1,10 @@
-%%---------------------------------------------------------- 
+%%------------------------------------------------------------------------------
 %% @author Mahdi Abdinejadi <mehdi61b@gmail.com> @end
 %% @version 0.1
 %% @since Nov 1, 2010. 
 %% @doc This module connect to tracker and request for the peers list. 
 %% @end
-%%----------------------------------------------------------
+%%------------------------------------------------------------------------------
  
 -module(tracker).
 
@@ -20,6 +20,7 @@
 %% @doc Calls the inets:start() to have service for using
 %% the http module function, then it send a request the url and get
 %% get respond and parse it to record. @end
+%% @spec (get_peers/2 :: (term(), string()) -> ok|{error,term()})
 -spec(get_peers/2 :: (term(), string()) -> ok|{error,term()}).
 
 get_peers(File_record, Peer_id)->

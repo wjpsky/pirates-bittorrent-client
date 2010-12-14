@@ -10,7 +10,7 @@
 -record(torrent,{announce,info,info_hash}).
 
 %% @author mahdi abdinejadi <mehdi61b@gmail.com> @end
-%% @doc peer information.
+%% @doc Peer information contains peer_id, ip and port.
 -record(peer,{
 			  peer_id  :: string(),
 			  ip       :: string(),
