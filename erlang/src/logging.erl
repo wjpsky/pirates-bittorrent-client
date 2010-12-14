@@ -1,5 +1,5 @@
  %%%-------------------------------------------------------------------
-%%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>, Nena Stojova
+%%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>, JianPing Wang, Nena Stojova
 %%% @copyright (C) 2010, Niel Madlani
 %%% @doc
 %%%
