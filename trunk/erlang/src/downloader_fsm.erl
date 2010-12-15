@@ -23,7 +23,7 @@
 -include("torrent_records.hrl").
 
 -export([init/1, downloading/2, downloading/3, handle_event/3,
-	 handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
+	 handle_sync_event/4, handle_info/3, terminate/3, code_change/4, start_link/0]).
 
 -record(piece, {
 	id :: integer(),
@@ -228,4 +228,10 @@ select_piece([PieceID|Tail], BitField) ->
 			% The peer have the piece. Return the piece ID.
 			PieceID
 	end.
+
+%%%===================================================================
+%%% API
+%%%===================================================================
 	
+start_link() ->
+    gen_fsm:start_link({local, ?MODULE}, ?MODULE, [], []).
