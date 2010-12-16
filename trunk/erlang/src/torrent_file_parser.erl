@@ -1,7 +1,7 @@
 %% Autor:Nena Stojova
 %% Created: Nov 2, 2010
 %% Description: This module just parses the .torrent file and stores the parsed
-%% data in a list of tuples. the way the parsing is done is explained(commented) for every function individually.
+%% data in a list of tuples. The way the parsing is done is explained(commented) for every function individually.
 
 %%==============================================================================
 %% MODULE HEADER

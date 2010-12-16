@@ -1,6 +1,6 @@
 %% Autor:Nena Stojova
 %% Created: Nov 2, 2010
-%% Description: This mmodule receieves the parsed torrent data and stores them intu records using the .hrl file
+%% Description: This mmodule receieves the parsed torrent data and stores them into records using the .hrl file
 
 
 
