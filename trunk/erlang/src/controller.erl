@@ -38,7 +38,7 @@
 -behaviour(gen_server).
 
 
--export([init/1, handle_call/3, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1,addToQ/1,fetchQ/0]).
+-export([init/1, handle_call/3, handle_cast/2,start_link/0, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1,addToQ/1,fetchQ/0]).
 
 
 
@@ -77,10 +77,10 @@ handle_cast({torrent_file_parsed, ParsedData}, {ID,Q}) ->
     Record = file_records:toRec(ParsedData),
 
     spawn(tracker, start, [Record, ID]),
-	{noreply, {ID,Q}},
+	% {noreply, {ID,Q}},
 
-    spawn(tracker, get_peers, [Record, State]),
-	{noreply, State};
+    spawn(tracker, get_peers, [Record, ID]),
+	{noreply, {ID,Q}};
 
 
 % Handles the got_peers message sent from the tracker module. It spawns a
