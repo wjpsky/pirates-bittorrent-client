@@ -1,6 +1,6 @@
-%% Author: nenastojova, jonkri
+%% Author: Nena Stojova, jonkri
 %% Created: Nov 2, 2010
-%% Description: TODO: Add description to openFile
+%% Description: This module just opens a file and passes the file data to the torrent_file_parser module
 -module(open_file).
 -behaviour(gen_server).
 -export([handle_call/3,handle_cast/2,handle_info/2,terminate/2,code_change/3,init/1,start/0,stop/0]).
@@ -65,6 +65,7 @@ code_change(_OldVsn, State, _Extra) -> {ok, State}.
 	  	%	{File, error, Reason}
     %end.
 
+%%Function that opens a file, and returns the data of the file 
 start(File)->
     case file:open(File, [read]) of
 		{ok, IoDevice} ->
