@@ -37,7 +37,11 @@
 
 -behaviour(gen_server).
 
--export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1, start_link/0]).
+
+-export([init/1, handle_call/3, handle_info/2, terminate/2, code_change/3, start/0, stop/0, parse_torrent_file/1,addToQ/1,fetchQ/0]).
+
+
+
 
 %%==============================================================================
 %% GEN_SERVER CALLBACKS
@@ -45,22 +49,39 @@
 
 % Initializes the gen_server, generating a peer ID for this client.
 init([]) -> 
-	{ok, peer_id:get_id()}.
+	{ok, {peer_id:get_id(),[]}}.
 
 % Handles the parse_torrent_file message. This message is sent from the
 % parse_torrent_file function below. It spawns an open_file process.
 handle_call({parse_torrent_file, File}, _From, State) ->
-    spawn(open_file, start, [File]),
-    {reply, ok, State}.
+	spawn(open_file, start, [File]),
+    {reply, ok, State};
+
+handle_call({addToQ, Element}, _From, {ID,[]}) ->
+    {reply,added, {ID,[Element]}};
+
+handle_call({addToQ, Element}, _From, {ID,Q}) ->
+    {reply,added, {ID,Q++[Element]}};
+
+handle_call(fetchQ, _From, {ID,[]}) ->
+    {reply, emptyQ,{ID,[]}};
+
+handle_call(fetchQ, _From, {ID,[Element|Q]}) ->
+    {reply, Element, {ID,Q}}.
 
 % Handles the torrent_file_parsed message. This message is sent from the
 % open_file module. It converts the parsed torrent data into records and spawns
 % the tracker process to begin communicating with the tracker.
-handle_cast({torrent_file_parsed, ParsedData}, State) ->
+handle_cast({torrent_file_parsed, ParsedData}, {ID,Q}) ->
     io:format("Torrent file parsed.\n"),
     Record = file_records:toRec(ParsedData),
+
+    spawn(tracker, start, [Record, ID]),
+	{noreply, {ID,Q}},
+
     spawn(tracker, get_peers, [Record, State]),
 	{noreply, State};
+
 
 % Handles the got_peers message sent from the tracker module. It spawns a
 % download_fsm process to start downloading.
@@ -69,7 +90,7 @@ handle_cast({got_peers, Peers, Pieces, PieceLength, PeerID, InfoHash}, State) ->
     gen_fsm:start(downloader_fsm, [Peers, Pieces, PieceLength, PeerID, InfoHash], []),
 	{noreply, State};
 
-handle_cast({notify_event, {parse_torrent_file,File}}, State) ->	
+handle_cast({notify_event, {parse_torrent_file,File}}, State) ->
 	spawn(open_file,start,[File]),
 	{noreply, State};
 
@@ -137,3 +158,13 @@ start_link() -> gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 -spec parse_torrent_file(File :: string()) -> ok.
 parse_torrent_file(File) ->
 	gen_server:call(?MODULE, {parse_torrent_file, File}).
+
+%<p> Other modules can use addToQ and fetchQ 
+% They send call message to the controller process and the controller process will exicute this comments in handle call 
+% The real queue is list that is stored as a second elemnt in State tuple <p>
+
+addToQ(Element)->
+	gen_server:call(?MODULE,{addToQ,Element}).
+fetchQ()->
+	gen_server:call(?MODULE,fetchQ).
+

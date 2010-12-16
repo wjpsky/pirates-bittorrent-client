@@ -1,4 +1,4 @@
-
+%% Autor:Nena Stojova
 %% length is an int / path is a list of strings
 -record(torrent_file,{length,path}).
 

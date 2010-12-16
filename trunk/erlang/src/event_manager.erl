@@ -1,6 +1,11 @@
 %% Author: nenastojova
 %% Created: Nov 27, 2010
-%% Description: 
+%% Description: The event manager is used to route events to registered processes.
+%% If a process wants to listen to event manager it should call register function and pass it's own PID.
+%% The process should be a gen_server.
+%% If a process or module wants to rase an event it needs onlt to call notify function.
+%% If a process wants to stop listening they can call unregister.
+%% The registered processes will receive events in the folowwing form: "{notify_event,Event}" in handle_cast.
 
 %%==============================================================================
 %% MODULE HEADER
