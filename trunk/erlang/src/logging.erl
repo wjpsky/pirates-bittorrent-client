@@ -2,6 +2,11 @@
 %%% @author Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>, JianPing Wang, Nena Stojova
 %%% @copyright (C) 2010, Niel Madlani
 %%% @doc
+%%% The logging module will receive event from the event_manager. When it recives the event
+%%%	it will store them to the file that is created.
+%%%	
+%%%	NOTE: The txt file will only be created one time. So everytime you start the program it wont make
+%%		  any duplicate txt files. 
 %%%
 %%% @end
 %%% Created :  7 Dec 2010 by Niel Madlani <nielmadlani@dhcp-164-144.nomad.chalmers.se>
@@ -36,9 +41,6 @@ handle_call(_Request, _From, State) ->
     {reply, Reply, State}.
 
 handle_cast({notify_event,Event},State)->
-	% now you can log 'Event'
-	% for example: 
-	%open(Event),
 	{noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
@@ -56,9 +58,11 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
+%%Will create a new file
 open(Append)->
     write(logMessage.txt,Append).
 
+%%Write to the txt file 
 write(Pid, Append)->
     {ok, S} = file:open(Pid, [append, write]),  
     lists:foreach(fun(X) ->

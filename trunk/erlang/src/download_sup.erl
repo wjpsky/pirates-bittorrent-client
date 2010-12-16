@@ -1,3 +1,8 @@
+%% Author: Jianping Wang, Niel Madlani
+%% Created: Dec 15, 2010
+%% Description: A supervisor for the downloader_fsm module. It will restart the module
+%%				if it crashes.
+
 -module(download_sup).
 -behaviour(supervisor).
 -export([start_link/0]).

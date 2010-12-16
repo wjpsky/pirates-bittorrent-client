@@ -1,3 +1,7 @@
+%% Author: Jianping Wang, Niel Madlani
+%% Created: Dec 15, 2010
+%% Description: A supervisor for the controller module. It will restart the controller module
+%%				if it crashes.
 
 -module(controller_sup).
 -behaviour(supervisor).
