@@ -1,0 +1,38 @@
+Welcome to the Pirates BitTorrent Client (Erlang) README file!
+
+The system was developed in a distributed programming project course at the IT
+University of Gothenburg. We were supposed to use Erlang for the torrent code.
+However, since we could use any other language for the GUI code we choose to
+work with Java. We choose Java because it is a imperative language (and thus, in
+our opinions, being a better suitable language for graphics than a functional
+language). Furthermore, we had previous experience with it and it also gives us
+platform independence and easy deployment.
+
+The first thing that you should note is that the design is very primitive and is
+not in any way finished. The reason for this is that there were not enough code
+produced during the course to make it possible to have a much nicer design.
+
+The first module that you should probably take a look at is the controller
+module. This is a gen_server process which receives and acts on different kinds
+of messages. It's well documented and you should probably start by looking
+through it. A Java GUI connected to the correct node can talk to this module
+through RCP calls.
+
+We tried to conform to Erlang design principles/behaviors. If you come from Java
+you can think of each of these behaviors as interfaces. You implement the
+functions and a corresponding Erlang module takes care of the rest. Examples of
+behaviors are gen_server, gen_event and supervisor.
+
+Place yourself in the ebin directory, start 'erl' and run the following
+commands in order to start the application:
+
+application:start(sasl).
+l(controller).
+l(open_file).
+l(torrent_file_parser).
+controller:start().
+controller:parse_torrent_file(<FILENAME>).
+
+The src.not_used contains modules that were not integrated in time for the
+deadline. The file 1.torrent was used by Navid in his unit tests so we are
+submitting that as well.
