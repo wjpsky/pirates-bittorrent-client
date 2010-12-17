@@ -1,0 +1,17 @@
+Welcome to the Pirates BitTorrent Client (Java) README file!
+
+The system was developed in a distributed programming project course at the IT
+University of Gothenburg. We were supposed to use Erlang for the torrent code.
+However, since we could use any other language for the GUI code we choose to
+work with Java. We choose Java because it is a imperative language (and thus, in
+our opinions, being a better suitable language for graphics than a functional
+language). Furthermore, we had previous experience with it and it also gives us
+platform independence and easy deployment.
+
+We never got the chance to properly integrate Java with Erlang, as we had to
+focus on other core features. However, we provide do mock objects and a GUI.
+
+Check out the Eclipse project from our Google Code page if you want the Eclipse
+project which you can build using m2eclipse: "Team > Run As... > Maven package".
+
+http://code.google.com/p/pirates-bittorrent-client/
