@@ -1,4 +1,4 @@
-%% Author: Nena Stojova, jonkri
+%% Author: Nena Stojova
 %% Created: Nov 2, 2010
 %% Description: This module just opens a file and passes the file data to the torrent_file_parser module
 -module(open_file).
