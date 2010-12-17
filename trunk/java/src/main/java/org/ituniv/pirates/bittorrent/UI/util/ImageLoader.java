@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 /**
 
- * @author 
+ * @author Jianping Wang
  *
  */
 public class ImageLoader {
