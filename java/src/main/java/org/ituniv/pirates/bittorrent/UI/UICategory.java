@@ -61,7 +61,7 @@ public class UICategory {
 		}
 
 		TreeItem activeItem = new TreeItem(tree, SWT.BORDER);
-		activeItem.setText("Activity");
+		activeItem.setText("Active");
 		try {
 			activeItem.setImage(new Image(sashForm.getDisplay(), ImageLoader
 					.addImage("image/activity.png")));

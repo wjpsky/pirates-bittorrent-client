@@ -25,124 +25,118 @@ import org.ituniv.pirates.bittorrent.Torrent;
  * @author Jianing Wang
  * 
  */
-public class BaseListener  implements SelectionListener {
-    public Shell shell;
-    private String type;
-    private String text;
-   
-	
-    public BaseListener(Shell shell, String type) {
-	this.shell = shell;
-	this.type = type;
-	
-	
-	
-	//thread.start();
-	
-    }
+public class BaseListener implements SelectionListener {
+	public Shell shell;
+	private String type;
+	private String text;
 
-    public void widgetDefaultSelected(SelectionEvent e) {
+	public BaseListener(Shell shell, String type) {
+		this.shell = shell;
+		this.type = type;
 
-    }
-
-    public void widgetSelected(SelectionEvent e) {
-	addBaseListener(e);
-    }
-
-    protected void addBaseListener(SelectionEvent e) {
-	if (type.equals(UIToolBar.LISTENER_OBJECT_NAME)) {
-	    text = ((ToolItem) e.getSource()).getToolTipText();
-	    System.out.println("SelectionEvent:" + text);
-
-	    if (text.equals(UIToolBar.ADD_TORRENT_NAEM)) {
-		fileDig(this.shell);
-	    } else if (text.equals(UIToolBar.REMOVE_NAEM)) {
-
-		UITorrentTable.delete();
-	    }else if (text.equals(UIToolBar.STOP_NAEM)) {
-		UITorrentTable.StopTorrent();
-		// System.out.println("SelectionEvent:" + text);
-	    }else if (text.equals(UIToolBar.START_NAEM)) {
-		 UITorrentTable.BeginTorrent();
-		// System.out.println("SelectionEvent:" + text);
-	    }
-	    // } else if (type.equals(UIMenu.LISTEN_OBJECT_NAME)) {
-	    // text = ((MenuItem) e.getSource()).getText();
-	} else if (type.equals(UICategory.LISTENER_OBJECT_NAME)) {
-
-	    text = ((Tree) e.getSource()).getSelection()[0].getText();//获取选中�?TreeItem
-	    UITorrentTable.setText(text);   
-	    if (text.equals("ALL")) {
-
-		    UITorrentTable.initData();//
-			System.out.println("SelectionEvent:" + text);
-		    } else if (text.equals("download")) {
-			;
-			UITorrentTable.DownloadTable();
-			
-
-		    } else if (text.equals("Finished")) {
-			UITorrentTable.FinishedTable();
-			System.out.println("SelectionEvent:" + text);
-
-		    } else if (text.equals("Activity")) {
-			UITorrentTable.ActivityTable();
-			System.out.println("SelectionEvent:" + text);
-
-		    } else if (text.equals("stop")) {
-			UITorrentTable.StopTable();
-			System.out.println("SelectionEvent:" + text);
-
-		    }
+		// thread.start();
 
 	}
 
-	//System.out.println("SelectionEvent:"+e);
-
-    }
-
-    /** torrent文件选择�?
-     * zjh 2010-11-20
-     * @param shell
-     */
-    protected void fileDig(Shell shell) {
-	FileDialog fileSelect = new FileDialog(shell, SWT.SINGLE);
-	fileSelect.setFilterNames(new String[] { "*.torrent" });
-	fileSelect.setFilterExtensions(new String[] { "*.torrent" });
-	String url = "";
-	url = fileSelect.open();
-	if (null != url && url.length() > 0) {
-
-	    System.out.println("filepath:" + url);
-	    List<File> files1 = new ArrayList<File>();
-	    File f = new File(url);
-	    new java.io.File(url).getName();
-	    files1.add(f);
-	    UITorrentTable.getTorrentTable().setVisible(false);
-	    String filename = new java.io.File(url).getName();
-	    Torrent torrentObject = new Torrent(filename.substring(0, filename
-		    .indexOf(".")), files1, 1500);
-	    ErlangModelDataAccessObject.getTorrents().add(torrentObject);
-
-	    new TableItem(UITorrentTable.getTorrentTable(), SWT.LEFT)
-		    .setText(new String[] { torrentObject.getName(),
-			    "" + torrentObject.getSize(),
-			    "" + torrentObject.getDownloadSpeed(),
-			    "" + torrentObject.getAmountDownloaded(),
-			    "" + torrentObject.getFiles().size(), "zjh1",
-			    "zjh2", "zjh3", "zjh4", "zjh5", "zjh6" });
-
-	    System.out.println("\t" + torrentObject.toString() + " active:"
-		    + torrentObject.isActive());
-	    UITorrentTable.initData();
-
-	    UITorrentTable.getTorrentTable().setVisible(true);
+	public void widgetDefaultSelected(SelectionEvent e) {
 
 	}
 
-    }
+	public void widgetSelected(SelectionEvent e) {
+		addBaseListener(e);
+	}
 
-    
-   
+	protected void addBaseListener(SelectionEvent e) {
+		if (type.equals(UIToolBar.LISTENER_OBJECT_NAME)) {
+			text = ((ToolItem) e.getSource()).getToolTipText();
+			System.out.println("SelectionEvent:" + text);
+
+			if (text.equals(UIToolBar.ADD_TORRENT_NAEM)) {
+				fileDig(this.shell);
+			} else if (text.equals(UIToolBar.REMOVE_NAEM)) {
+
+				UITorrentTable.delete();
+			} else if (text.equals(UIToolBar.STOP_NAEM)) {
+				UITorrentTable.StopTorrent();
+				// System.out.println("SelectionEvent:" + text);
+			} else if (text.equals(UIToolBar.START_NAEM)) {
+				UITorrentTable.BeginTorrent();
+				// System.out.println("SelectionEvent:" + text);
+			}
+			// } else if (type.equals(UIMenu.LISTEN_OBJECT_NAME)) {
+			// text = ((MenuItem) e.getSource()).getText();
+		} else if (type.equals(UICategory.LISTENER_OBJECT_NAME)) {
+
+			text = ((Tree) e.getSource()).getSelection()[0].getText();// TreeItem
+			UITorrentTable.setText(text);
+			if (text.equals("ALL")) {
+
+				UITorrentTable.initData();//
+				System.out.println("SelectionEvent:" + text);
+			} else if (text.equals("download")) {
+				;
+				UITorrentTable.DownloadTable();
+
+			} else if (text.equals("Finished")) {
+				UITorrentTable.FinishedTable();
+				System.out.println("SelectionEvent:" + text);
+
+			} else if (text.equals("Activity")) {
+				UITorrentTable.ActivityTable();
+				System.out.println("SelectionEvent:" + text);
+
+			} else if (text.equals("stop")) {
+				UITorrentTable.StopTable();
+				System.out.println("SelectionEvent:" + text);
+
+			}
+
+		}
+
+		// System.out.println("SelectionEvent:"+e);
+
+	}
+
+	/**
+	 * torrent
+	 * 
+	 * @param shell
+	 */
+	protected void fileDig(Shell shell) {
+		FileDialog fileSelect = new FileDialog(shell, SWT.SINGLE);
+		fileSelect.setFilterNames(new String[] { "*.torrent" });
+		fileSelect.setFilterExtensions(new String[] { "*.torrent" });
+		String url = "";
+		url = fileSelect.open();
+		if (null != url && url.length() > 0) {
+
+			System.out.println("filepath:" + url);
+			List<File> files1 = new ArrayList<File>();
+			File f = new File(url);
+			new java.io.File(url).getName();
+			files1.add(f);
+			UITorrentTable.getTorrentTable().setVisible(false);
+			String filename = new java.io.File(url).getName();
+			Torrent torrentObject = new Torrent(filename.substring(0, filename
+					.indexOf(".")), files1, 1500);
+			ErlangModelDataAccessObject.getTorrents().add(torrentObject);
+
+			new TableItem(UITorrentTable.getTorrentTable(), SWT.LEFT)
+					.setText(new String[] { torrentObject.getName(),
+							"" + torrentObject.getSize(),
+							"" + torrentObject.getDownloadSpeed(),
+							"" + torrentObject.getAmountDownloaded(),
+							"" + torrentObject.getFiles().size(), "wjp1",
+							"wjp2", "wjp3", "wjp4", "wjp5", "wjp6" });
+
+			System.out.println("\t" + torrentObject.toString() + " active:"
+					+ torrentObject.isActive());
+			UITorrentTable.initData();
+
+			UITorrentTable.getTorrentTable().setVisible(true);
+
+		}
+
+	}
 
 }

@@ -4,7 +4,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
+/**
+ * StatsBar
+ * 
+ * @author Jianping Wang
+ * 
+ */
 public class StatusBar {
 	private SashForm sashForm;
 	private Label statusBar;
